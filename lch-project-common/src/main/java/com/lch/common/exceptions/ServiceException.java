@@ -3,8 +3,6 @@ package com.lch.common.exceptions;
 /**
  * 自定义异常处理类
  * @ClassName: ServiceException 
- * @author Jun
- * @date 2018年10月25日 下午3:32:47 
  *
  */
 public class ServiceException extends Exception {
