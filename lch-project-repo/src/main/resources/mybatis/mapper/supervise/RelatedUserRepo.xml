@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.supervise.RelatedUserRepo">
+
+	<insert id="addFriend" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_related_user (
+			userId,
+			relatedUserId
+		)
+		SELECT
+			#{userId},
+			#{relatedUserId}
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM t_related_user WHERE userId = #{userId} and relatedUserId=#{relatedUserId} and (status=0 or status=2))
+	</insert>
+
+	<select id="findFriend" resultType="com.lch.entity.supervise.UserSimpleBase">
+		SELECT
+			ti.id,
+			phone_no AS 'phoneNo',
+			nick_name AS 'nickName',
+			real_name AS 'realName',
+			sex,
+			portrait,
+			
+			s.totalCoins,
+			s.victoryPoint,
+			l.levelName as levelName
+		FROM
+			t_user t
+		join t_user_info ti on t.id = ti.user_base_id
+		join t_user_simple_info s on s.userId = ti.id
+		join t_user_level l on l.id = s.levelId
+		where ti.`status` = 0
+		and ti.id != #{userId}
+			<if test="queryStr != null and queryStr !='' ">
+				AND (
+					t.nick_name LIKE concat('%',#{queryStr},'%')
+				 or t.real_name LIKE concat('%',#{queryStr},'%')
+				)
+			</if>
+	</select>
+	
+	<select id="getMyInfo" resultType="com.lch.entity.supervise.UserSimpleBase">
+		SELECT
+			ti.id,
+			phone_no AS 'phoneNo',
+			nick_name AS 'nickName',
+			real_name AS 'realName',
+			sex,
+			portrait,
+			
+			s.totalCoins,
+			s.victoryPoint,
+			l.levelName as levelName
+		FROM
+			t_user t
+		join t_user_info ti on t.id = ti.user_base_id
+		join t_user_simple_info s on s.userId = ti.id
+		join t_user_level l on l.id = s.levelId
+		where ti.`status` = 0
+		and ti.id = #{userId}
+	</select>
+	
+	
+	<select id="getRelatedUser" resultType="com.lch.entity.supervise.UserSimpleBase">
+		SELECT
+			ti.id,
+			t.id as 'relatedId',
+			
+			phone_no AS 'phoneNo',
+			nick_name AS 'nickName',
+			real_name AS 'realName',
+			sex,
+			portrait,
+			
+			t.`status`,
+			case when t.`status`=0 then '未关联' when t.`status`=1 then '已关联' else '已拒绝' end as 'statusStr',
+			s.totalCoins,
+			s.victoryPoint,
+			l.levelName as levelName,
+			(
+			select count(1) from t_related_user tr where tr.userId = t.userId 
+			<if test="status != null">
+				AND t.`status` = #{status}
+			</if>
+		) as num
+		FROM
+			t_related_user t
+		JOIN t_user_info ti ON t.relatedUserId = ti.id
+		
+		join t_user_simple_info s on s.userId = ti.id
+		join t_user_level l on l.id = s.levelId
+		
+		JOIN t_user u ON ti.user_base_id = u.id
+		WHERE
+		t.userId = #{userId}
+		<if test="status != null">
+			AND t.`status` = #{status}
+		</if>
+		ORDER BY FIELD(t.`status`, 2,0,1) , t.id desc
+	</select>
+	
+	<select id="getRelatedApply" resultType="com.lch.entity.supervise.UserSimpleBase">
+		SELECT
+			ti.id,
+			t.id as 'relatedId',
+			phone_no AS 'phoneNo',
+			nick_name AS 'nickName',
+			real_name AS 'realName',
+			sex,
+			portrait,
+			
+			t.`status`,
+			case when t.`status`=0 then '未关联' when t.`status`=1 then '已关联' else '已拒绝' end as 'statusStr',
+			s.totalCoins,
+			s.victoryPoint,
+			l.levelName as levelName,
+			(
+			select count(1) from t_related_user tr where tr.relatedUserId = t.relatedUserId
+			<if test="status != null">
+				AND t.`status` = #{status}
+			</if>
+		) as num
+		FROM
+			t_related_user t
+		JOIN t_user_info ti ON t.userId = ti.id
+		
+		join t_user_simple_info s on s.userId = ti.id
+		join t_user_level l on l.id = s.levelId
+		
+		JOIN t_user u ON ti.user_base_id = u.id
+		WHERE
+		t.relatedUserId = #{userId}
+		<if test="status != null">
+			AND t.`status` = #{status}
+		</if>
+		ORDER BY FIELD(t.`status`, 2,0,1) , t.id desc
+	</select>
+	
+</mapper>

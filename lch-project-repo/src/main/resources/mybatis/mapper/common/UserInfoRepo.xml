@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.common.UserInfoRepo">
+
+    <select id="get" resultType="com.lch.entity.common.UserInfo">
+    	SELECT
+    		ui.id,
+    		ui.user_base_id AS "userBaseId",
+    		ui.`status`,
+    		u.phone_no AS "phone"
+    	FROM t_user_info ui
+    	LEFT JOIN t_user u ON u.id = ui.user_base_id
+    	WHERE ui.openid = #{openid} AND ui.user_type = #{userType}
+    </select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user_info(
+			user_base_id,
+			openid,
+			user_type,
+			`status`,
+			user_name,
+			pwd,
+			subscribe_scene,
+			create_date
+		)
+		SELECT
+			#{userBaseId},
+			#{openid},
+			#{userType},
+			0,
+			#{userName},
+			#{pwd},
+			#{subscribeScene},
+			NOW()
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM t_user_info WHERE `openid` = #{openid} AND user_type = #{userType})
+	</insert>
+
+	<update id="updateUserData">
+        update t_user_info ui,(select openid,user_type from t_user_info where id = #{userInfoId}) uii
+        set ui.openid = uii.openid,
+        ui.user_type = 0
+        where ui.id = #{userId}
+    </update>
+</mapper>

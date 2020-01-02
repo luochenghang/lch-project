@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.common.SysUserRepo">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_sys_user(
+			user_name,
+			pwd,
+			is_admin,
+			`status`,
+			create_date,
+			updat_date
+		)
+		SELECT
+			#{userName},
+			#{pwd},
+			#{isAdmin},
+			#{status},
+			NOW(),
+			NOW()
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM t_sys_user WHERE user_name = #{userName} AND `status` != 3)
+	</insert>
+
+	<update id="update">
+		UPDATE t_sys_user SET
+		<if test="userName != null and userName != ''">user_name=#{userName},</if>
+		<if test="pwd != null and pwd != ''">pwd=#{pwd},</if>
+		<if test="isAdmin != null">is_admin=#{isAdmin},</if>
+		<if test="status != null">`status`=#{status},</if>
+		updat_date = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<select id="findSysUserList" resultType="SysUser">
+		SELECT
+			u.id,
+			u.user_name AS "userName",
+			u.is_admin AS "isAdmin",
+			u.`status`
+		FROM t_sys_user u
+		<where>
+			AND u.`status` != 3
+			<if test="user != null and user.status != null">
+				AND u.`status` = #{user.status}
+			</if>
+			<if test="user != null and user.userName != null and user.userName != ''">
+				AND (u.user_name LIKE concat('%',#{user.userName},'%'))
+			</if>
+		</where>
+		ORDER BY u.create_date DESC
+	</select>
+	
+	<select id="getSysUser" resultType="SysUser">
+		SELECT
+			u.id,
+			u.user_name AS "userName",
+			u.`status`,
+			u.is_admin as "isAdmin"
+		FROM t_sys_user u
+		WHERE u.id = #{id}
+		LIMIT 0,1
+	</select>
+	
+
+	<update id="batchDelete">
+		UPDATE t_sys_user
+		SET `status` = 3
+		WHERE id IN 
+		<foreach collection="idList " item="item" open="(" close=")" separator="," > #{item} </foreach>
+	</update>
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.common.UserBaseRepo">
+    
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user(
+			nick_name,
+			portrait,
+			sex,
+			unionid,
+			real_name,
+			phone_no,
+			city_id,
+			id_card,
+			create_date
+		) 
+		SELECT
+			#{nickName},
+			#{portrait},
+			#{sex},
+			#{unionid},
+			#{realName},
+			#{phoneNo},
+			#{cityId},
+			#{idCard},
+			#{createDate}
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM t_user WHERE `unionid` = #{unionid})
+	</insert>
+	
+	<insert id="insertForWechat" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user(unionid,nick_name,sex,create_date) VALUES(#{unionid},#{nickName},#{sex},#{createDate})
+	</insert>
+	
+	<update id="update">
+		UPDATE t_user
+		<set>
+			<if test="realName != null and realName != ''">real_name=#{realName},</if>
+			<if test="idCard != null and idCard != ''">id_card=#{idCard},</if>
+			<if test="cityId != null and cityId != ''">city_id=#{cityId},</if>
+			<if test="nickName != null and nickName != ''">nick_name=#{nickName},</if>
+			<if test="phoneNo != null and phoneNo != ''">phone_no=#{phoneNo},</if>
+			<if test="portrait != null and portrait != ''">portrait=#{portrait},</if>
+			<if test="sex != null">sex=#{sex},</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.lamp.GoodsRepo">
+
+
+	<resultMap type="Goods" id="goods">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="coverImg" property="coverImg" />
+		<result column="goodsType" property="goodsType" />
+		<result column="goodsTypeStr" property="goodsTypeStr" />
+		<result column="costPrice" property="costPrice" />
+		<result column="sellPrice" property="sellPrice" />
+		<result column="sellCount" property="sellCount" />
+		<result column="status" property="status" />
+		<result column="createDate" property="createDate" />
+		<result column="updateDate" property="updateDate" />
+		<collection property="goodsInfo" column="id"
+			ofType="com.lch.entity.common.FileResource" select="findGoodsInfo"></collection>
+		<collection property="banner" column="id"
+			ofType="com.lch.entity.common.FileResource" select="findBanner"></collection>
+	</resultMap>
+
+	<select id="findGoodsInfo" resultType="com.lch.entity.common.FileResource">
+		select t.url from
+		t_file_resource t where t.obj_id=#{id} and t.`type`=1
+	</select>
+
+	<select id="findBanner" resultType="FileResource">
+		select t.url from
+		t_file_resource t where t.obj_id=#{id} and t.`type`=2
+	</select>
+
+	<select id="getAllGoods" resultMap="goods">
+		SELECT
+		t.id,
+		t.title,
+		t.coverImg,
+		t.goodsType,
+		d.value as 'goodsTypeStr',
+		t.costPrice,
+		t.sellPrice,
+		t.sellCount,
+		t.`status`,
+		t.createDate,
+		t.updateDate
+		FROM
+		goods t
+		JOIN t_sys_dict d ON t.goodsType = d.`key` and d.`type` ='goodsType'
+		WHERE 1=1
+		<!-- 关键字查询 -->
+		<if test="queryStr != null and queryStr != ''">
+			AND t.title LIKE CONCAT('%',#{queryStr},'%')
+		</if>
+		ORDER BY t.createDate desc
+	</select>
+
+	<insert id="insert">
+		insert into goods(
+		title,
+		goodsType,
+		coverImg,
+		costPrice,
+		sellPrice,
+		createDate,
+		updateDate
+		)
+		SELECT
+		#{title},
+		#{goodsType},
+		#{coverImg},
+		#{costPrice},
+		#{sellPrice},
+		NOW(),
+		NOW()
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM goods WHERE title = #{title}
+		and goodsType =#{goodsType})
+	</insert>
+
+	<delete id="batchDelete">
+		delete from goods where id in
+		<foreach collection="idList " item="item" open="(" close=")"
+			separator=","> #{item} </foreach>
+	</delete>
+
+	<update id="update">
+		update goods set
+		<if test="title != null and title != ''">title=#{title},</if>
+		<if test="goodsType != null">goodsType=#{goodsType},</if>
+		<if test="coverImg != null">is_admin=#{coverImg},</if>
+		<if test="costPrice != null">`costPrice`=#{costPrice},</if>
+		<if test="sellPrice != null">`sellPrice`=#{sellPrice},</if>
+		updat_date = NOW()
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updStastus">
+		update goods set status =#{status} where id=#{id}
+	</update>
+	
+	<select id="get" resultType="Goods">
+		SELECT
+		t.id,
+		t.title,
+		t.coverImg,
+		t.goodsType,
+		d.value as 'goodsTypeStr',
+		t.costPrice,
+		t.sellPrice,
+		t.sellCount,
+		t.`status`,
+		t.createDate,
+		t.updateDate
+		FROM
+		goods t
+		JOIN t_sys_dict d ON t.goodsType = d.`key` and d.`type` ='goodsType'
+		WHERE t.id=#{id}
+	</select>
+
+
+</mapper>

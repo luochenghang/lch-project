@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.lamp.SysMenuRepo">
+
+
+<resultMap type="SysMenu" id="Menu">
+		<result column="name" property="name" />
+		<collection property="menus" ofType="SysMenu">
+			<result property="name" column="sonName" />
+			<result property="id" column="sonId" />
+			<result property="sort" column="sonSort" />
+			<result property="path" column="sonPath" />
+		</collection>
+	</resultMap>
+	
+	<select id="getMenu" resultMap="Menu">
+		SELECT
+			t.id,t.`name`,t.icon,t.sort,t.path,
+			t2.`name` as sonName,t2.id as sonId ,t2.icon as sonIcon,t2.sort as sonSort,t2.path as sonPath
+		FROM
+			t_sys_menu t
+		left join t_sys_menu t2 on t.id = t2.pid
+		JOIN t_sys_user_menu um ON um.mid = t.id
+		JOIN t_sys_user u ON um.uid = u.id
+		where u.id=#{userId} and t.pid=0
+	</select>
+	
+	<select id="getAllMenu" resultMap="Menu">
+		SELECT
+			t.id,t.`name`,t.icon,t.sort,t.path,
+			t2.`name` as sonName,t2.id as sonId ,t2.icon as sonIcon,t2.sort as sonSort,t2.path as sonPath
+		FROM
+			t_sys_menu t
+		left join t_sys_menu t2 on t.id = t2.pid
+		where t.pid=0
+		ORDER BY t.id ,t2.sort
+	</select>
+	
+
+</mapper>

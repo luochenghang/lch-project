@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.supervise.TaskInfoRepo">
+
+	<insert id="addTask" useGeneratedKeys="true" keyProperty="id">
+		INSERT
+		INTO t_task (
+		userId,
+		level,
+		endDate,
+		rewardCoins,
+		punishCoins,
+		title,
+		content,
+		coverImg,
+		isForMe,
+		createUser,
+		createDate
+		)
+		SELECT
+		#{userId},
+		#{level},
+		#{endDate},
+		#{rewardCoins},
+		#{punishCoins},
+		#{title},
+		#{content},
+		#{coverImg},
+		#{isForMe},
+		#{createUser},
+		NOW()
+		FROM dual
+		WHERE
+		NOT EXISTS(SELECT id FROM t_task WHERE content =
+		#{content} and title =
+		#{title} and coverImg=#{coverImg})
+	</insert>
+
+	<update id="updTask">
+		update t_task set
+		<if test="title != null and title != ''">
+			title = #{title},
+		</if>
+		<if test="coverImg != null and coverImg != ''">
+			coverImg = #{coverImg},
+		</if>
+		<if test="content != null and content != ''">
+			content = #{content},
+		</if>
+		<if test="level != null">
+			level = #{level},
+		</if>
+		<if test="endDate != null">
+			endDate = #{endDate},
+		</if>
+		<if test="rewardCoins != null">
+			rewardCoins = #{rewardCoins},
+		</if>
+		<if test="punishCoins != null">
+			punishCoins = #{punishCoins},
+		</if>
+		createDate = now(),
+		`status`=0,
+		auditStatus=0
+		where createUser =
+		#{createUser}
+		and id = #{id}
+	</update>
+
+	<select id="getAllTask"
+		resultType="com.lch.entity.supervise.TaskInfo">
+		select
+		t.id,
+		t.userId,
+		t.`level`,
+		case when `level`=0 then '一般' when
+		`level` = 1 then '紧急' else '加急' end as 'levelStr',
+		t.endDate,
+		t.rewardCoins,
+		t.punishCoins,
+		t.auditStatus,
+		t.reason,
+		t.title,
+		t.content,
+		t.`status`,
+		t.coverImg,
+		t.isForMe,
+		t.createUser,
+		t.createDate,
+		u.nick_name
+		as 'nickName'
+		FROM
+		t_task t
+		join t_user_info i on t.userId = i.id
+		join
+		t_user u on u.id = i.user_base_id
+		WHERE
+		t.userId = #{userId}
+		<if test="status != null ">
+			and t.status = #{status}
+		</if>
+		<if test="auditStatus != null ">
+			and auditStatus = #{auditStatus}
+		</if>
+		<if test="queryStr != null and queryStr !='' ">
+			AND (
+			t.title LIKE concat('%',#{queryStr},'%')
+			or t.content
+			LIKE concat('%',#{queryStr},'%')
+			)
+		</if>
+		ORDER BY FIELD(t.auditStatus, 2,0,1) ,FIELD(t.`status`, 2,0,1) ,
+		t.createDate desc
+	</select>
+
+
+	<select id="getTAAllTask"
+		resultType="com.lch.entity.supervise.TaskInfo">
+		SELECT
+		t.id,
+		t.userId,
+		t.`level`,
+		case when `level`=0 then '一般' when
+		`level` = 1 then '紧急' else '加急' end as 'levelStr',
+		t.endDate,
+		t.rewardCoins,
+		t.punishCoins,
+		t.auditStatus,
+		t.reason,
+		t.title,
+		t.content,
+		t.`status`,
+		t.coverImg,
+		t.isForMe,
+		t.createUser,
+		t.createDate,
+		u.nick_name
+		as 'nickName'
+		FROM
+		t_task t
+		join t_user_info i on t.userId = i.id
+		join
+		t_user u on u.id = i.user_base_id
+		WHERE
+		t.createUser=#{createUser}
+		<if test="status != null ">
+			and t.status = #{status}
+		</if>
+		<if test="auditStatus != null ">
+			and auditStatus = #{auditStatus}
+		</if>
+
+		ORDER BY FIELD(t.auditStatus, 2,0,1) ,FIELD(t.`status`, 2,0,1) ,
+		t.createDate desc
+	</select>
+
+	<select id="getTaskCreateByMe"
+		resultType="com.lch.entity.supervise.TaskInfo">
+		SELECT
+		t.id,
+		t.userId,
+		t.`level`,
+		case when `level`=0 then '一般' when
+		`level` = 1 then '紧急' else '加急' end as 'levelStr',
+		t.endDate,
+		t.rewardCoins,
+		t.punishCoins,
+		t.auditStatus,
+		t.reason,
+		t.title,
+		t.content,
+		t.`status`,
+		t.coverImg,
+		t.isForMe,
+		t.createUser,
+		t.createDate,
+		u.nick_name
+		as 'nickName'
+		FROM
+		t_task t
+		join t_user_info i on t.userId = i.id
+		join
+		t_user u on u.id = i.user_base_id
+		WHERE
+		t.createUser=#{createUser}
+		<if test="status != null ">
+			and t.status = #{status}
+		</if>
+		<if test="auditStatus != null ">
+			and auditStatus = #{auditStatus}
+		</if>
+
+		ORDER BY FIELD(t.auditStatus, 2,0,1) ,FIELD(t.`status`, 2,0,1) ,
+		t.createDate desc
+	</select>
+
+
+	<update id="auditTask">
+		update t_task t
+		join t_related_user r on ((t.createUser = r.userId and
+		r.relatedUserId = #{userId} )or (t.createUser = r.relatedUserId and
+		r.userId = #{userId}))
+		set
+		<if test="reason != null and reason!= ''">
+			reason = #{reason},
+		</if>
+		t.auditStatus = #{auditStatus}
+		where t.id = #{id}
+		and r.`status` = 1
+	</update>
+
+	<update id="auditTaskDone">
+		update t_task t
+		set
+		t.status = #{status}
+		where t.id = #{id}
+		and t.userId!=#{userId}
+	</update>
+
+	<select id="getTaskGiftCount" resultType="map">
+		SELECT
+		(
+		SELECT
+		count(1)
+		FROM
+		t_task
+		WHERE
+		createUser = #{userId}
+		AND auditStatus = 0
+		) AS 'myNoAuditTaskNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_task
+		WHERE
+		createUser = #{relatedId}
+		AND auditStatus = 0
+		) AS 'taNoAuditTaskNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_task
+		WHERE
+		createUser = #{relatedId}
+		AND auditStatus = 1
+		AND `status` = 0
+		) AS 'taNoTodoTaskNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_task
+		WHERE
+		createUser = #{userId}
+		AND auditStatus = 1
+		AND `status` = 0
+		) AS 'myNoTodoTaskNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_gift
+		WHERE
+		createUser = #{userId}
+		AND auditStatus = 0
+		) AS 'myNoAuditGiftNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_gift
+		WHERE
+		createUser = #{relatedId}
+		AND auditStatus = 0
+		) AS 'taNoAuditGiftNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_buy_record
+		WHERE
+		userId = #{userId}
+		AND `status` = 0
+		) AS 'myBuyRecordNum',
+		(
+		SELECT
+		count(1)
+		FROM
+		t_buy_record
+		WHERE
+		userId = #{relatedId}
+		AND `status` = 0
+		) AS 'taBuyRecordNum'
+	</select>
+
+</mapper>

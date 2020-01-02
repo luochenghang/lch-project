@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.supervise.GiftInfoRepo">
+
+	<insert id="addGift" useGeneratedKeys="true" keyProperty="id">
+		INSERT
+		INTO t_gift (
+		userId,
+		title,
+		coverImg,
+		content,
+		auditStatus,
+		coins,
+		isForMe,
+		createUser,
+		createDate
+		)
+		SELECT
+		#{userId},
+		#{title},
+		#{coverImg},
+		#{content},
+		#{auditStatus},
+		#{coins},
+		#{isForMe},
+		#{createUser},
+		NOW()
+		FROM
+		dual
+		WHERE NOT EXISTS(SELECT id FROM t_gift WHERE userId =
+		#{userId} and
+		title = #{title} and coverImg= #{coverImg} and content=#{content}  and createUser = #{createUser})
+	</insert>
+
+	<insert id="addGiftPraise" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT
+		INTO t_gift_praise (
+		userId,
+		giftId,
+		status,
+		createDate
+		)
+		SELECT
+		#{userId},
+		#{giftId},
+		1,
+		NOW()
+		FROM dual
+		WHERE NOT EXISTS(SELECT id
+		FROM
+		t_gift_praise WHERE userId =
+		#{userId} and giftId = #{giftId})
+	</insert>
+
+	<update id="updGift">
+		update t_gift set
+		<if test="title != null and title != ''">
+			title = #{title},
+		</if>
+		<if test="coverImg != null and coverImg != ''">
+			coverImg = #{coverImg},
+		</if>
+		<if test="content != null and content != ''">
+			content = #{content},
+		</if>
+		<if test="coins != null">
+			coins = #{coins},
+		</if>
+		createDate = now(),
+		auditStatus=0
+		where createUser = #{createUser}
+		and id
+		= #{id}
+	</update>
+
+	<update id="updPriase">
+		UPDATE t_gift_praise t
+		JOIN t_gift g ON t.giftId =
+		g.id
+		SET t.`status` = #{status},t.updateDate=now(),
+		g.priseNum = priseNum + #{praiseNum}
+		WHERE
+		t.userId = #{userId}
+		AND t.giftId = #{giftId}
+	</update>
+
+	<select id="getGiftById"
+		resultType="com.lch.entity.supervise.GiftInfo">
+		SELECT
+		IFNULL(p.`status`, 0) AS 'isTapPraise',
+		t.id,
+		t.userId,
+		t.title,
+		t.coverImg,
+		t.content,
+		t.coins,
+		t.priseNum,
+		t.auditStatus,
+		t.reason,
+		t.isForMe,
+		t.createUser,
+		u.nick_name AS 'nickName',
+		t.createDate
+		FROM
+		t_gift t
+		JOIN t_user_info i ON t.createUser = i.id
+		JOIN t_user u ON u.id = i.user_base_id
+		LEFT JOIN t_gift_praise p ON t.id = p.giftId AND p.userId = #{userId} 
+		WHERE t.id = #{id}
+
+	</select>
+
+	<select id="getAllGift"
+		resultType="com.lch.entity.supervise.GiftInfo">
+		SELECT
+		t.id,
+		t.userId,
+		t.title,
+		t.coverImg,
+		t.content,
+		t.coins,
+		t.priseNum,
+		t.auditStatus,
+		t.reason,
+		t.isForMe,
+		t.createUser,
+		u.nick_name as
+		'nickName',
+		t.createDate
+		FROM
+		t_gift t
+		join t_user_info i on t.userId =
+		i.id
+		join t_user u on u.id = i.user_base_id
+		where
+		1= 1
+		<if test="auditStatus != null ">
+			AND t.auditStatus = #{auditStatus}
+		</if>
+		<if test="queryStr != null and queryStr !='' ">
+			AND (
+			t.title LIKE concat('%',#{queryStr},'%')
+			or t.content
+			LIKE concat('%',#{queryStr},'%')
+			)
+		</if>
+		ORDER BY priseNum desc , t.createDate desc
+	</select>
+
+	<select id="getGiftByUser"
+		resultType="com.lch.entity.supervise.GiftInfo">
+		SELECT
+		t.id,
+		t.userId,
+		t.title,
+		t.coverImg,
+		t.content,
+		t.coins,
+		t.priseNum,
+		t.auditStatus,
+		t.reason,
+		t.isForMe,
+		t.createUser,
+		u.nick_name as
+		'nickName',
+		t.createDate
+		FROM
+		t_gift t
+		join t_user_info i on t.userId =
+		i.id
+		join t_user u on u.id = i.user_base_id
+		WHERE
+		t.createUser =
+		#{userId}
+		<if test="auditStatus != null ">
+			AND t.auditStatus = #{auditStatus}
+		</if>
+		ORDER BY t.createDate desc
+	</select>
+
+	<update id="auditGift">
+		update t_gift t
+		set
+		<if test="reason != null and reason!= ''">
+			reason = #{reason},
+		</if>
+		t.auditStatus = #{auditStatus}
+		where t.id = #{id}
+		and t.createUser =
+		#{relatedUser}
+		and t.isForMe=1
+		and t.userId = #{relatedUser}
+	</update>
+
+</mapper>

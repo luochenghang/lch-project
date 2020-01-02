@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lch.repo.supervise.BuyRecordRepo">
+
+	<insert id="addBuyRecord" useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT
+		INTO t_buy_record (
+		userId,
+		giftId,
+		buyNum,
+		totalCoins,
+		createDate
+		)
+		SELECT
+		#{userId},
+		#{giftId},
+		#{buyNum},
+		#{totalCoins},
+		NOW()
+		FROM dual
+		WHERE NOT EXISTS(SELECT id FROM
+		t_buy_record WHERE userId
+		=#{userId} and giftId = #{giftId} and createDate=now() )
+	</insert>
+
+	<update id="updBuyRecord">
+		update t_buy_record set
+		<if test="status != null ">
+			status = #{status},
+		</if>
+		<if test="arrivalDate != null ">
+			arrivalDate = #{arrivalDate},
+		</if>
+		updateDate = now()
+		where userId = #{userId}
+		and id=#{id}
+	</update>
+
+
+	<select id="getAllBuyRecord"
+		resultType="com.lch.entity.supervise.BuyRecord">
+		SELECT
+		t.id,
+		t.userId,
+		t.giftId,
+		t.buyNum,
+		t.totalCoins,
+		t.`status`,
+		t.createDate,
+		t.arrivalDate,
+		t.updateDate,
+		
+		g.title,
+		g.coverImg,
+		g.content,
+		g.coins,
+		g.priseNum,
+		u.nick_name as
+		'nickName'
+		FROM
+		t_buy_record t
+		join t_gift g
+		on t.giftId=g.id
+		join
+		t_user_info i on g.createUser = i.id
+		join t_user u
+		on u.id =
+		i.user_base_id
+		where
+		1= 1
+		<if test="userId != null ">
+			AND t.userId = #{userId}
+		</if>
+		<if test="status != null ">
+			AND t.status = #{status}
+		</if>
+		ORDER BY t.createDate desc, g.priseNum desc
+	</select>
+
+	<select id="get" resultType="com.lch.entity.supervise.BuyRecord">
+		SELECT
+		t.id,
+		t.userId,
+		t.giftId,
+		t.buyNum,
+		t.totalCoins,
+		t.`status`,
+		t.createDate,
+		t.arrivalDate,
+		t.updateDate
+		FROM
+		t_buy_record t
+		where
+		t.id=#{id}
+	</select>
+
+
+</mapper>
