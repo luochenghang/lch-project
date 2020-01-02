@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>org.owasp.antisamy</groupId>
 			<artifactId>antisamy</artifactId>
-			<version>1.5.5</version>
+			<version>1.5.7</version>
 		</dependency>
 
 		<!-- 谷歌Guava工具包依赖 -->
