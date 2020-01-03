@@ -145,7 +145,7 @@ public class FileUtils {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		return floder + "/" + IdGen.uniqueNum() + "." + getFileExtension(fileName);
+		return floder + "/" + IdGen.uuid() + "." + getFileExtension(fileName);
 	}
 
 }

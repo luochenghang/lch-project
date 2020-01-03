@@ -19,7 +19,7 @@ public class FileResource extends DataEntity<FileResource> {
 
 	private Long type;// 资源类型（1小橙卡小程序评论图片
 
-	private Long url; // 资源路径
+	private String url; // 资源路径
 
 	private Date createDate; // 创建时间
 }

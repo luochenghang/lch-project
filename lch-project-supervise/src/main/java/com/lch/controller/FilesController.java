@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
+import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.utils.DateUtils;
 import com.lch.utils.FileUtils;
 
@@ -25,10 +26,12 @@ public class FilesController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/v1/upload", method = RequestMethod.POST)
+	@AuthIgnore(login = false)
 	public AjaxResponse upload(MultipartFile file, String fileName) {
 
 		String floder = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
 		String path = FileUtils.save(file, floder, fileName);
 		return succees(path);
 	}
+	
 }

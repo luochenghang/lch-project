@@ -83,11 +83,13 @@ public class GoodsController extends BaseController {
 	 * 新增商品
 	 * 
 	 * @param goods
+	 * @param name  文件上传的名字
 	 * @return
 	 * @throws ServiceException
 	 */
 	@PostMapping("/addGoods")
 	public AjaxResponse addGoods(Goods goods) throws ServiceException {
+
 		return succees(goodsService.addGoods(goods));
 	};
 
