@@ -22,6 +22,8 @@ public class PayRecord extends DataEntity<PayRecord> {
 
 	private String address; // 用户详细地址
 
+	private String phone; // 用户电话
+	
 	private Long num; // 购买数量
 	
 	private Double realPrice; // 真实的交易价格

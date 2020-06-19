@@ -7,6 +7,8 @@
 			t.id,
 			t.name,
 			t.address,
+			t.goodsId,
+			t.phone,
 			t.num,
 			t.realPrice,
 			t.earnPrice,
@@ -31,16 +33,18 @@
 			name,
 			goodsId,
 			address,
+			phone,
 			num,
 			realPrice,
 			earnPrice,
 			createDate,
-			payDate,
+			payDate
 		)
 		SELECT
 		#{name},
 		#{goodsId},
 		#{address},
+		#{phone},
 		#{num},
 		#{realPrice},
 		#{earnPrice},
@@ -57,6 +61,7 @@
 		update t_pay_record set
 		<if test="name != null and name != ''">name=#{name},</if>
 		<if test="goodsId != null">goodsId=#{goodsId},</if>
+		<if test="phone != null">phone=#{phone},</if>
 		<if test="address != null">address=#{address},</if>
 		<if test="realPrice != null">`realPrice`=#{realPrice},</if>
 		<if test="num != null">`num`=#{num},</if>
@@ -74,6 +79,8 @@
 			t.id,
 			t.name,
 			t.address,
+			t.goodsId,
+			t.phone,
 			t.num,
 			t.realPrice,
 			t.earnPrice,
@@ -88,7 +95,7 @@
 		JOIN t_goods g on t.goodsId = g.id
 		JOIN t_sys_dict d ON g.goodsType = d.`key` and
 		d.`type` ='goodsType'
-		WHERE id=#{id}
+		WHERE t.id=#{id}
 	</select>
 
 </mapper>

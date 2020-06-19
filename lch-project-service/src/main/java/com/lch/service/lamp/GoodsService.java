@@ -1,8 +1,8 @@
 package com.lch.service.lamp;
 
-import com.lch.common.base.Criteria;
+import java.util.List;
+
 import com.lch.common.exceptions.ServiceException;
-import com.lch.component.page.Page;
 import com.lch.entity.lamp.Goods;
 
 public interface GoodsService {
@@ -12,7 +12,7 @@ public interface GoodsService {
 	 * 
 	 * @return
 	 */
-	Page<Goods> getAllGoods(Criteria criteria);
+	List<Goods> getAllGoods();
 
 	/**
 	 * 根据id查询

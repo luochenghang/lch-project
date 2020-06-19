@@ -21,6 +21,8 @@ public class PayRecordVo extends DataEntity<PayRecordVo> {
 	private String goodsName; // 商品名称
 	
 	private String goodsType; // 商品类型
+	
+	private String phone; // 用户电话
 
 	private String name; // 用户名称
 

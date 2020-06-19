@@ -7,12 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.pagehelper.PageInfo;
-import com.lch.common.base.Criteria;
 import com.lch.common.base.DataService;
 import com.lch.common.exceptions.ServiceException;
-import com.lch.component.page.Page;
-import com.lch.component.page.PageAdapter;
 import com.lch.entity.lamp.Goods;
 import com.lch.repo.lamp.GoodsRepo;
 import com.lch.service.lamp.GoodsService;
@@ -23,10 +19,9 @@ import com.lch.utils.StringUtils;
 public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements GoodsService {
 
 	@Override
-	public Page<Goods> getAllGoods(Criteria criteria) {
-		setPage(criteria);
+	public List<Goods> getAllGoods() {
 
-		return PageAdapter.adpater(new PageInfo<Goods>(repo.getAllGoods(criteria)));
+		return repo.getAllGoods();
 	}
 
 	@Override

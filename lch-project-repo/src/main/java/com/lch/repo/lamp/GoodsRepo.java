@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.lch.common.base.BaseRepo;
-import com.lch.common.base.Criteria;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.entity.lamp.Goods;
 
@@ -17,7 +16,7 @@ public interface GoodsRepo extends BaseRepo<Goods>{
 	 * 查询全部的商品
 	 * @return
 	 */
-	List<Goods> getAllGoods(Criteria criteria);
+	List<Goods> getAllGoods();
 	
 	/**
 	 * 上下架

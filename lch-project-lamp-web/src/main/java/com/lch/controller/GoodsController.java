@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lch.common.base.BaseController;
-import com.lch.common.base.Criteria;
 import com.lch.common.config.AjaxResponse;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.entity.lamp.Goods;
@@ -27,8 +26,8 @@ public class GoodsController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/getAllGoods")
-	public AjaxResponse getAllGoods(Criteria criteria) {
-		return succees(goodsService.getAllGoods(criteria));
+	public AjaxResponse getAllGoods() {
+		return succees(goodsService.getAllGoods());
 	};
 
 	/**
