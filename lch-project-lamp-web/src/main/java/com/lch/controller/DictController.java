@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lch.common.config.AjaxResponse;
 import com.lch.common.enums.ResponseCode;
+import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.service.common.DictService;
 
 
@@ -23,6 +24,7 @@ public class DictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/dictList", method = RequestMethod.GET)
+	@AuthIgnore(login = false)
 	public AjaxResponse list(String type) {
 
 		return AjaxResponse.toReturn(ResponseCode.SUCCEED, dictService.findList(type));
@@ -34,6 +36,7 @@ public class DictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/dictValue", method = RequestMethod.GET)
+	@AuthIgnore(login = false)
 	public AjaxResponse value(String type) {
 
 		return AjaxResponse.toReturn(ResponseCode.SUCCEED, dictService.getValue(type));

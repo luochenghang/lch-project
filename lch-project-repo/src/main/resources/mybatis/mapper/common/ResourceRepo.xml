@@ -4,19 +4,77 @@
 
 	<insert id="addFileResource" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO t_file_resource(
-			obj_id,
+			objId,
 			type,
+			typeDesc,
 			url,
-			create_date
+			sort,
+			createDate
 		)
 		SELECT
 			#{objId},
 			#{type},
+			#{typeDesc},
 			#{url},
+			#{sort},
 			NOW()
 		FROM dual
-		WHERE NOT EXISTS(SELECT id FROM t_file_resource WHERE obj_id = #{objId} AND `type` != #{type} and url = #{url})
+		WHERE NOT EXISTS(SELECT id FROM t_file_resource WHERE objId = #{objId} AND `type` != #{type} and url = #{url})
 	</insert>
 
+	<select id="getAllFileResource" resultType="FileResource">
+		SELECT
+				t.id,
+				t.`objId`,
+				case when g.id is null then '无'  when t.`type` = 2 or t.`type` = 3 then g.title else '无'  end as title,
+				t.sort,
+				t.`status`,
+				t.`type`,
+				t.`typeDesc`,
+				t.url,
+				t.createDate
+			FROM
+				t_file_resource t
+				left join t_goods g on t.objId = g.id
+			WHERE
+				1 = 1
+				<!-- 关键字查询 -->
+				<if test="title != null and title != ''">
+					AND g.title LIKE CONCAT('%',#{title},'%')
+				</if>
+				<if test="type != null">
+					AND t.`type` = #{type}
+				</if>
+				<if test="status != null">
+					AND t.`status` = #{status}
+				</if>
+		ORDER BY t.sort, t.createDate desc
+	</select>
+	
+	<select id="getAllFileResourceGroupByType" resultType="FileResource">
+		SELECT
+			t.`type`,
+			t.`typeDesc`,
+			count(f.id) AS typeCount,
+			(
+				SELECT
+					count(1)
+				FROM
+					t_file_resource
+			) AS sumCount
+		FROM
+			t_file_type t
+		LEFT JOIN t_file_resource f ON f.type = t.type
+		GROUP BY
+			t.`type`
+		ORDER BY
+			t.type
+	</select>
+	
+	<delete id="batchDelete">
+		delete from t_file_resource where id in
+		<foreach collection="idList " item="item" open="(" close=")"
+			separator=","> #{item} </foreach>
+	</delete>
 
 </mapper>

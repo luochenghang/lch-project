@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.lamp.OrderRepo">
+
+	<select id="getAllOrder" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+			t.id,
+			t.orderNo,
+			t.goodsId,
+			t.num,
+			t.costPrice,
+			t.sellPrice,
+			t.finalPrice,
+			t.createDate,
+			t.updateDate,
+			t.status,
+			t.userType,
+			t.userId,
+			tu.real_name as userName,
+			tu.phone_no as phone,
+			g.title,
+			g.coverImg,
+			ty.`name` as 'goodsTypeName'
+		FROM
+		t_order t
+		left JOIN t_goods g on t.goodsId = g.id
+		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+		left join t_user_info ti on t.userType = ti.user_type and ti.id = t.userId
+		left join t_user tu on ti.user_base_id = tu.id
+		 		
+		WHERE 1=1
+		<!-- 关键字产品名称 -->
+		<if test="title != null and title != ''">
+			AND g.title LIKE CONCAT('%',#{title},'%')
+		</if>
+		<!-- 关键字订单编号 -->
+		<if test="orderNo != null and orderNo != ''">
+			AND t.orderNo  = #{orderNo}
+		</if>
+		<if test="status != null">
+			AND t.status = #{status}
+		</if>
+		<!-- 关键字用户名 -->
+		<if test="userName != null and userName != ''">
+			AND (t.nick_name  = #{userName} or t.reak_name = #{userName})
+		</if>
+		<!-- 日期 -->
+		<if test="createDate != null">
+			AND TO_DAYS(t.createDate)  = TO_DAYS(#{createDate})
+		</if>
+		
+		ORDER BY t.createDate desc
+	</select>
+
+	<insert id="insert">
+		insert into t_order(
+			orderNo,
+			goodsId,
+			costPrice,
+			sellPrice,
+			finalPrice,
+			num,
+			status,
+			userId,
+			userType,
+			createDate,
+			updateDate
+		)
+		SELECT
+		#{orderNo},
+		#{goodsId},
+		#{costPrice},
+		#{sellPrice},
+		#{finalPrice},
+		#{num},
+		#{status},
+		#{userId},
+		#{userType},
+		NOW(),
+		NOW()
+		FROM
+		dual
+		WHERE NOT EXISTS(SELECT id FROM t_order WHERE orderNo = #{orderNo})
+	</insert>
+
+
+	<update id="update">
+		update t_order set
+		<if test="goodsId != null">goodsId=#{goodsId},</if>
+		<if test="sellPrice != null">sellPrice=#{sellPrice},</if>
+		<if test="costPrice != null">costPrice=#{costPrice},</if>
+		<if test="finalPrice != null">`finalPrice`=#{finalPrice},</if>
+		<if test="status != null">`status`=#{status},</if>
+		<if test="num != null">`num`=#{num},</if>
+		<if test="userType != null">`userType`=#{userType},</if>
+		<if test="userId != null">`userId`=#{userId},</if>
+		updateDate = NOW()
+		WHERE id = #{id}
+	</update>
+	
+	
+	<delete id="batchDelete">
+		delete from t_order where id in
+		<foreach collection="idList " item="item" open="(" close=")"
+			separator=","> #{item} </foreach>
+	</delete>
+	
+	<select id="get" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+			t.id,
+			t.orderNo,
+			t.goodsId,
+			t.num,
+			t.costPrice,
+			t.sellPrice,
+			t.finalPrice,
+			t.createDate,
+			t.updateDate,
+			t.status,
+			t.userType,
+			t.userId,
+			tu.real_name as userName,
+			tu.phone_no as phone,
+			tu.sex,
+			g.status as 'goodsStatus',
+			g.title,
+			g.coverImg,
+			ty.`name` as 'goodsTypeName'
+		FROM
+		t_order t
+		left JOIN t_goods g on t.goodsId = g.id
+		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+		left join t_user_info ti on t.userType = ti.user_type and ti.id = t.userId
+		left join t_user tu on ti.user_base_id = tu.id		
+		WHERE t.id=#{id}
+	</select>
+	
+	<select id="getOrderCountGroupByStatus" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+		(
+			SELECT
+				count(1)
+			FROM
+				t_order
+			WHERE
+				STATUS = 0
+		) AS doingOrderCount,
+		(
+			SELECT
+				count(1)
+			FROM
+				t_order
+			WHERE
+				STATUS = 1
+		) AS doneOrderCount,
+		(SELECT count(1) FROM t_order) AS allOrderCount
+	</select>
+	
+		<select id="getAllOrderAmount" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+			t.id,
+			t.orderNo,
+			t.goodsId,
+			t.num,
+			t.costPrice,
+			t.sellPrice,
+			t.finalPrice,
+			t.createDate,
+			t.updateDate,
+			t.status,
+			t.userType,
+			t.userId,
+			tu.real_name as userName,
+			tu.phone_no as phone,
+			g.title,
+			g.coverImg,
+			ty.`name` as 'goodsTypeName'
+		FROM
+		t_order t
+		left JOIN t_goods g on t.goodsId = g.id
+		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+		left join t_user_info ti on t.userType = ti.user_type and ti.id = t.userId
+		left join t_user tu on ti.user_base_id = tu.id
+		 		
+		WHERE 1=1
+		<if test="status != null">
+			AND t.status = #{status}
+		</if>
+		<!-- 日期 -->
+		<if test="isCurrentDay == 1">
+			AND TO_DAYS(t.updateDate)  = TO_DAYS(NOW())
+		</if>
+		<!-- 本月 -->
+		<if test="isCurrentMonth == 1">
+			AND  DATE_FORMAT( t.updateDate, '%Y%m' ) = DATE_FORMAT( CURDATE() , '%Y%m' )
+		</if>
+		ORDER BY t.createDate desc
+	</select>
+	
+	<select id="getAmountCount" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+			totalPriceTodayBefore,earnTotalPriceTodayBefore,doneOrderCount,todayZero, totalPriceToday,earnTotalPriceToday
+		FROM
+			(
+				SELECT
+					sum(o.finalPrice) AS totalPriceTodayBefore,
+					sum(o.finalPrice - o.costPrice) AS earnTotalPriceTodayBefore,
+					(SELECT count(1) FROM t_order WHERE STATUS = 1 ) AS doneOrderCount,
+					DATE_FORMAT(CURDATE(), '%Y-%m-%d') as todayZero
+				FROM
+					t_order o
+				WHERE
+					o. STATUS = 1
+				AND o.updateDate &lt; CURDATE()
+			) t,
+			(
+				SELECT
+					sum(o.finalPrice) AS totalPriceToday,
+					sum(o.finalPrice - o.costPrice) AS earnTotalPriceToday
+				FROM
+					t_order o
+				WHERE
+					o. STATUS = 1
+				AND DATE_FORMAT(o.updateDate, '%Y%m') = DATE_FORMAT(CURDATE(), '%Y%m')
+			) y
+	</select>
+	
+	<select id="getEarnTotalAndOrderCount" resultType="com.lch.entity.lamp.vo.OrderVo">
+		SELECT
+			sum(o.finalPrice) AS totalPrice,
+			sum(o.finalPrice - o.costPrice) AS earnTotalPrice,
+			(SELECT count(1) FROM t_order) AS allOrderCount,
+			(
+				SELECT
+					count(1)
+				FROM
+					t_order
+				WHERE
+					STATUS = 1
+			) AS doneOrderCount
+		FROM
+			t_order o
+		WHERE
+			o. STATUS = 1
+	</select>
+	
+	<select id="getEveryOrderCountAndAmounts" resultType="com.lch.entity.lamp.EchartsData">
+			SELECT
+			t.days,
+			count(o.id) as orderCount,
+			IFNULL(sum(o.finalPrice),0) as totalPrice,
+			IFNULL(sum(o.finalPrice-o.costPrice),0) as totalEarnPrice
+		FROM
+			(
+				SELECT
+					date_add(
+						concat(
+							date_format(LAST_DAY(#{dateDay}), '%Y-%m-'),
+							'01'
+						),
+						INTERVAL (
+							cast(
+								help_topic_id AS signed INTEGER
+							)
+						) DAY
+					) days
+				FROM
+					mysql.help_topic
+				WHERE
+					help_topic_id &lt; DAY (last_day(#{dateDay}))
+				ORDER BY
+					help_topic_id
+			) t
+		LEFT JOIN t_order o ON TO_DAYS(t. days) = TO_DAYS(o.updateDate)
+		AND o. STATUS = 1
+		GROUP BY
+			t. days
+		ORDER BY
+			t. days
+	</select>
+	
+	<select id="getMonthOrderCountAndAmounts" resultType="com.lch.entity.lamp.EchartsData">
+		SELECT
+			t.months,
+			count(o.id) AS orderCount,
+			IFNULL(sum(o.finalPrice), 0) AS totalPrice,
+			IFNULL(
+				sum(o.finalPrice - o.costPrice),
+				0
+			) AS totalEarnPrice
+		FROM
+			(
+				SELECT
+					date_add(
+						concat(
+							date_format(
+								LAST_DAY(#{dateDay}),
+								'%Y-%m-'
+							),
+							'01'
+						),
+						INTERVAL (
+							cast(
+								help_topic_id AS signed INTEGER
+							)
+						) MONTH
+					) months
+				FROM
+					mysql.help_topic
+				WHERE
+					help_topic_id &lt; 12
+				ORDER BY
+					help_topic_id
+			) t
+		LEFT JOIN t_order o ON DATE_FORMAT( o.updateDate, '%Y%m' ) = DATE_FORMAT(t.months , '%Y%m' )
+		AND o. STATUS = 1
+		GROUP BY
+			t.months
+		ORDER BY
+			t.months
+	</select>
+
+</mapper>

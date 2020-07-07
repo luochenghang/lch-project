@@ -12,7 +12,7 @@ public interface GoodsService {
 	 * 
 	 * @return
 	 */
-	List<Goods> getAllGoods();
+	List<Goods> getAllGoods(Long status, Long goodsTypeId, String title);
 
 	/**
 	 * 根据id查询
@@ -29,7 +29,7 @@ public interface GoodsService {
 	 * @return
 	 * @throws ServiceException
 	 */
-	Integer delGoods(String ids) throws ServiceException;
+	Integer delGoods(List<String> ids) throws ServiceException;
 
 	/**
 	 * 编辑
@@ -57,6 +57,6 @@ public interface GoodsService {
 	 * @return
 	 * @throws ServiceException
 	 */
-	Integer addGoods(Goods goods) throws ServiceException;
+	Integer addGoods(Goods goods, String filesDetailPath) throws ServiceException;
 
 }

@@ -123,7 +123,7 @@ public class FileUtils {
 	 */
 	public static String save(MultipartFile file, String floder, String fileName) {
 		String filePath = getFilePath(floder, fileName);
-		File newFile = new File(App.SUPERVISE_BASE_PATH + filePath);
+		File newFile = new File(App.BASE_PATH + filePath);
 		try {
 			file.transferTo(newFile);
 		} catch (IllegalStateException e) {
@@ -141,7 +141,7 @@ public class FileUtils {
 	 * @return
 	 */
 	public static String getFilePath(String floder, String fileName) {
-		File file = new File(App.SUPERVISE_BASE_PATH + floder);
+		File file = new File(App.BASE_PATH + floder);
 		if (!file.exists()) {
 			file.mkdirs();
 		}

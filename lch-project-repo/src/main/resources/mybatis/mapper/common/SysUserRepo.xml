@@ -6,27 +6,29 @@
 		INSERT INTO t_sys_user(
 			user_name,
 			pwd,
-			is_admin,
-			`status`,
+			real_name,
+			email,
+			status,
 			create_date,
 			updat_date
 		)
 		SELECT
 			#{userName},
 			#{pwd},
-			#{isAdmin},
+			#{realName},
+			#{email},
 			#{status},
 			NOW(),
 			NOW()
 		FROM dual
-		WHERE NOT EXISTS(SELECT id FROM t_sys_user WHERE user_name = #{userName} AND `status` != 3)
+		WHERE NOT EXISTS(SELECT id FROM t_sys_user WHERE user_name = #{userName} or email = #{email})
 	</insert>
 
 	<update id="update">
 		UPDATE t_sys_user SET
 		<if test="userName != null and userName != ''">user_name=#{userName},</if>
-		<if test="pwd != null and pwd != ''">pwd=#{pwd},</if>
-		<if test="isAdmin != null">is_admin=#{isAdmin},</if>
+		<if test="realName != null and realName != ''">real_name=#{realName},</if>
+		<if test="email != null">email=#{email},</if>
 		<if test="status != null">`status`=#{status},</if>
 		updat_date = NOW()
 		WHERE id = #{id}
@@ -36,18 +38,16 @@
 		SELECT
 			u.id,
 			u.user_name AS "userName",
-			u.is_admin AS "isAdmin",
-			u.`status`
+			u.`status`,
+			u.pwd,
+			u.real_name as realName,
+			u.email,
+			u.loginNum,
+			u.create_date as createDate,
+			u.updat_date as updateDate,
+			u.last_login_time as lastLoginTime
 		FROM t_sys_user u
-		<where>
-			AND u.`status` != 3
-			<if test="user != null and user.status != null">
-				AND u.`status` = #{user.status}
-			</if>
-			<if test="user != null and user.userName != null and user.userName != ''">
-				AND (u.user_name LIKE concat('%',#{user.userName},'%'))
-			</if>
-		</where>
+		where u.`status` != 3
 		ORDER BY u.create_date DESC
 	</select>
 	
@@ -56,7 +56,13 @@
 			u.id,
 			u.user_name AS "userName",
 			u.`status`,
-			u.is_admin as "isAdmin"
+			u.pwd,
+			u.real_name as realName,
+			u.email,
+			u.loginNum,
+			u.create_date as createDate,
+			u.updat_date as updateDate,
+			u.last_login_time as lastLoginTime
 		FROM t_sys_user u
 		WHERE u.id = #{id}
 		LIMIT 0,1
@@ -64,10 +70,9 @@
 	
 
 	<update id="batchDelete">
-		UPDATE t_sys_user
-		SET `status` = 3
+		update  t_sys_user set status = 3
 		WHERE id IN 
-		<foreach collection="idList " item="item" open="(" close=")" separator="," > #{item} </foreach>
+		<foreach collection="idList" item="item" open="(" close=")" separator="," > #{item} </foreach>
 	</update>
-
+	
 </mapper>

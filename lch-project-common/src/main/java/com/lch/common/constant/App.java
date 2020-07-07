@@ -24,7 +24,7 @@ public final class App {
 	public static final String REDIS_SUPERVISE_TOKEN_KEY = "supervise_user_token";
 
 	/** 上传的基础路径 */
-	public static final String SUPERVISE_BASE_PATH = loader.getConfigValue("base_path");
+	public static final String BASE_PATH = loader.getConfigValue("base_path");
 	
 	/** 定义常量 **/
 	// 监督小程序类型

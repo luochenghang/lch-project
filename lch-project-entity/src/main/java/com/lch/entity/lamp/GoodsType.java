@@ -12,28 +12,28 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class PayRecord extends DataEntity<PayRecord> {
+public class GoodsType extends DataEntity<GoodsType> {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long goodsId; // 商品id
+	private String name; // 名称
 
-	private String name; // 用户名称
+	private Long sort ; // 排序编号
 
-	private String address; // 用户详细地址
+	private Long status; // 启用1  禁用0
 
-	private String phone; // 用户电话
-	
-	private Long num; // 购买数量
-	
-	private Double realPrice; // 真实的交易价格
-
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createDate; // 创建时间
-
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date payDate; // 购买时间
 	
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate; // 更新时间
+
+	//商品分类下的数量
+	private Integer goodsCount;
+	
+	//商品总数量
+	private Integer sumCount;
+	
+	//商品分类下订单数量
+	private Integer orderCount;
 }

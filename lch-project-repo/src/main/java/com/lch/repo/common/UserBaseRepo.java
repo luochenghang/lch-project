@@ -1,6 +1,8 @@
 
 package com.lch.repo.common;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -10,6 +12,7 @@ import org.apache.ibatis.annotations.Update;
 
 import com.lch.common.base.BaseRepo;
 import com.lch.entity.common.UserBase;
+import com.lch.entity.common.UserInfo;
 
 /**
  * 小程序用户repo
@@ -110,4 +113,17 @@ public interface UserBaseRepo extends BaseRepo<UserBase> {
 	 */
 	@Select("SELECT `status` FROM t_user_info WHERE id =#{id}")
 	Integer getUserStatus(Long id);
+	
+	@Select("SELECT u.id,b.nick_name AS nickName, b.phone_no AS phoneNo FROM t_user b LEFT JOIN t_user_info u ON u.user_base_id = b.id WHERE u.user_type = #{userType} order by b.nick_name")
+	List<UserBase> findAllUserByUserType(Long userType);
+	
+	
+	List<UserInfo> getAllUser(String queryStr, Date createDate);
+	
+	UserInfo getUserByInfoId(Long id);
+	
+	@Select("select count(1) from t_user where phone_no = #{phoneNo}")
+	int getCountByPhone(String phoneNo);
+
+	List<UserInfo> findTopThreeUser();
 }

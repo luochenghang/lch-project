@@ -37,6 +37,7 @@ public class UserInfo extends BaseEntity<UserInfo> {
 	private String subscribeScene;
 
 	private String phone;
+	
 
 	private UserBase userBase;
 }

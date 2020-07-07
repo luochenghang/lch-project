@@ -20,9 +20,9 @@ public class Goods extends DataEntity<Goods> {
 
 	private String title; // 商品标题
 
-	private Long goodsType; // 商品类型id 和字典表相关联
+	private Long goodsTypeId; // 商品类型id 和商品类型表相关联
 
-	private String goodsTypeStr; // 商品类型
+	private String typeDesc; // 商品类型
 
 	private String coverImg; // 封面图
 	
@@ -34,13 +34,13 @@ public class Goods extends DataEntity<Goods> {
 
 	private Long sellCount; // 卖出去的总数
 
-	private List<FileResource> goodsInfo; // 商品介绍资源
+	private List<FileResource> detailImg; // 商品介绍资源
 
-	private List<FileResource> banner; // 商品banner图资源
+	private List<FileResource> bannerImg; // 商品banner图资源
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createDate; // 创建时间
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate; // 更新时间
 }

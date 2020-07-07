@@ -7,25 +7,34 @@
 		<id column="id" property="id" />
 		<result column="title" property="title" />
 		<result column="coverImg" property="coverImg" />
-		<result column="goodsType" property="goodsType" />
-		<result column="goodsTypeStr" property="goodsTypeStr" />
+		<result column="goodsTypeId" property="goodsTypeId" />
+		<result column="typeDesc" property="typeDesc" />
 		<result column="costPrice" property="costPrice" />
 		<result column="sellPrice" property="sellPrice" />
 		<result column="sellCount" property="sellCount" />
 		<result column="status" property="status" />
 		<result column="createDate" property="createDate" />
 		<result column="updateDate" property="updateDate" />
-		<collection property="banner" column="id"
-			ofType="com.lch.entity.common.FileResource" select="findBanner"></collection>
+		<collection property="bannerImg" column="id"
+			ofType="com.lch.entity.common.FileResource" select="findBanner">
+		</collection>
+		<collection property="detailImg" column="id"
+			ofType="com.lch.entity.common.FileResource" select="findDetail">
+		</collection>
 	</resultMap>
 
 	<resultMap type="com.lch.entity.common.FileResource" id="Resource">
 		<result column="url" property="url" />
 	</resultMap>
 
-	<select id="findBanner" resultMap="Resource">
-		select t.url from
-		t_file_resource t where t.obj_id=#{id} and t.`type`=1
+	<select id="findBanner" resultType="FileResource">
+		select * from
+		t_file_resource t where t.objId=#{id} and t.`type`=3 order by t.sort
+	</select>
+	
+	<select id="findDetail" resultType="FileResource">
+		select * from
+		t_file_resource t where t.objId=#{id} and t.`type`=2 order by t.sort
 	</select>
 
 	<select id="getAllGoods" resultMap="goods">
@@ -33,8 +42,8 @@
 		t.id,
 		t.title,
 		t.coverImg,
-		t.goodsType,
-		d.value as 'goodsTypeStr',
+		t.goodsTypeId,
+		d.name as typeDesc,
 		t.costPrice,
 		t.sellPrice,
 		t.sellCount,
@@ -43,20 +52,25 @@
 		t.updateDate
 		FROM
 		t_goods t
-		JOIN t_sys_dict d ON t.goodsType = d.`key` and
-		d.`type` ='goodsType'
+		JOIN t_goods_type d ON t.goodsTypeId = d.id
 		WHERE 1=1
 		<!-- 关键字查询 -->
-		<if test="queryStr != null and queryStr != ''">
-			AND t.title LIKE CONCAT('%',#{queryStr},'%')
+		<if test="title != null and title != ''">
+			AND t.title LIKE CONCAT('%',#{title},'%')
+		</if>
+		<if test="status != null">
+			AND t.status  = #{status}
+		</if>
+		<if test="goodsTypeId != null">
+			AND t.goodsTypeId  = #{goodsTypeId}
 		</if>
 		ORDER BY t.createDate desc
 	</select>
 
-	<insert id="insert">
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id">
 		insert into t_goods(
 		title,
-		goodsType,
+		goodsTypeId,
 		coverImg,
 		costPrice,
 		sellPrice,
@@ -65,7 +79,7 @@
 		)
 		SELECT
 		#{title},
-		#{goodsType},
+		#{goodsTypeId},
 		#{coverImg},
 		#{costPrice},
 		#{sellPrice},
@@ -75,7 +89,7 @@
 		dual
 		WHERE NOT EXISTS(SELECT id FROM t_goods WHERE title = #{title}
 		and
-		goodsType =#{goodsType})
+		goodsTypeId =#{goodsTypeId})
 	</insert>
 
 	<delete id="batchDelete">
@@ -86,8 +100,8 @@
 
 	<update id="update">
 		update t_goods set
-		<if test="title != null and title != ''">title=#{title},</if>
-		<if test="goodsType != null">goodsType=#{goodsType},</if>
+		<if test="title != null">title=#{title},</if>
+		<if test="goodsTypeId != null">goodsTypeId=#{goodsTypeId},</if>
 		<if test="coverImg != null">coverImg=#{coverImg},</if>
 		<if test="costPrice != null">`costPrice`=#{costPrice},</if>
 		<if test="sellPrice != null">`sellPrice`=#{sellPrice},</if>
@@ -99,13 +113,13 @@
 		update t_goods set status =#{status} where id=#{id}
 	</update>
 
-	<select id="get" resultType="Goods">
+	<select id="get" resultMap="goods">
 		SELECT
 		t.id,
 		t.title,
 		t.coverImg,
-		t.goodsType,
-		d.value as 'goodsTypeStr',
+		t.goodsTypeId,
+		d.name as typeDesc,
 		t.costPrice,
 		t.sellPrice,
 		t.sellCount,
@@ -114,8 +128,7 @@
 		t.updateDate
 		FROM
 		t_goods t
-		JOIN
-		t_sys_dict d ON t.goodsType = d.`key` and d.`type` ='goodsType'
+		JOIN t_goods_type d ON t.goodsTypeId = d.id
 		WHERE
 		t.id=#{id}
 	</select>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.lamp.GoodsTypeRepo">
+
+	<select id="getAllGoodsType" resultType="GoodsType">
+		SELECT
+			t.id,
+			t. NAME,
+			t.sort,
+			t.`status`,
+			t.createDate,
+			t.updateDate,
+			count(g.id) as goodsCount,
+			(select count(1) from t_goods) as sumCount
+			FROM
+				t_goods_type t
+			LEFT JOIN t_goods g ON t.id = g.goodsTypeId
+			WHERE
+				1 = 1
+				<if test="status != null">
+					AND t.`status` = #{status}
+				</if>
+			GROUP BY
+				t.id,
+				t. NAME,
+				t.sort,
+				t.`status`,
+				t.createDate,
+				t.updateDate
+		ORDER BY t.sort, t.createDate desc
+	</select>
+
+	<insert id="insert">
+		insert into t_goods_type(
+		`name`,
+		`sort`,
+		`status`,
+		createDate
+		)
+		SELECT
+		#{name},
+		#{sort},
+		#{status},
+		now()
+		FROM
+		dual
+		WHERE NOT EXISTS(SELECT id FROM t_goods_type WHERE `name` = #{name})
+	</insert>
+
+	<delete id="batchDelete">
+		delete from t_goods_type where id in
+		<foreach collection="idList " item="item" open="(" close=")"
+			separator=","> #{item} </foreach>
+	</delete>
+
+
+	<update id="update">
+		update t_goods_type set sort =#{sort}, `name` = #{name}, `status` = #{status} where id=#{id}
+	</update>
+
+	<select id="get" resultType="GoodsType">
+		SELECT
+		t.id,
+		t.name,
+		t.sort,
+		t.`status`,
+		t.createDate,
+		t.updateDate
+		FROM
+		t_goods_type t
+		WHERE t.id=#{id}
+	</select>
+	
+	<select id="getOrderCountGroupByType" resultType="GoodsType">
+		select t.id,
+			t.name,
+			t.sort,
+			t.`status`,
+			t.createDate,
+			t.updateDate,
+			count(o.id) as orderCount 
+		from t_goods_type t
+		LEFT JOIN t_goods g on t.id = g.goodsTypeId
+		LEFT JOIN t_order o on g.id = o.goodsId and o.status = 1
+		where t.status = 1
+		GROUP BY t.id
+		ORDER BY t.sort, t.createDate desc
+	</select>
+
+
+</mapper>

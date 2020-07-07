@@ -12,6 +12,7 @@
 			phone_no,
 			city_id,
 			id_card,
+			address,
 			create_date
 		) 
 		SELECT
@@ -23,6 +24,7 @@
 			#{phoneNo},
 			#{cityId},
 			#{idCard},
+			#{address},
 			#{createDate}
 		FROM dual
 		WHERE NOT EXISTS(SELECT id FROM t_user WHERE `unionid` = #{unionid})
@@ -32,18 +34,119 @@
 		INSERT INTO t_user(unionid,nick_name,sex,create_date) VALUES(#{unionid},#{nickName},#{sex},#{createDate})
 	</insert>
 	
+	
+	<resultMap type="com.lch.entity.common.UserInfo" id="UserInfo">
+		<id column="id" property="userBase.id" />
+		<result column="userType" property="userType" />
+		<result column="nickName" property="userBase.nickName" />
+		<result column="phoneNo" property="userBase.phoneNo" />
+		<result column="portrait" property="userBase.portrait" />
+		<result column="sex" property="userBase.sex" />
+		<result column="realName" property="userBase.realName" />
+		<result column="createDate" property="userBase.createDate" />
+		<result column="address" property="userBase.address" />
+		<result column="orderCount" property="userBase.orderCount" />
+	</resultMap>
+	
+	<select id="getAllUser" resultMap="UserInfo">
+		SELECT
+			b.id,
+			b.nick_name AS nickName,
+			b.phone_no AS phoneNo,
+			b.portrait,
+			b.sex,
+			b.real_name as realName,
+			b.create_date as createDate,
+			u.user_type as userType,
+			b.address,
+			count(o.id) as orderCount
+		FROM
+			t_user b
+		LEFT JOIN t_user_info u ON u.user_base_id = b.id
+		LEFT JOIN t_order o on u.id = o.userId and o.`status` = 1
+		WHERE
+			1=1
+			<if test="queryStr !=null and queryStr !=''">
+				 AND (
+					b.nick_name LIKE concat('%',#{queryStr},'%')
+					or b.phone_no = #{queryStr}
+					)
+			</if>
+			<if test="createDate !=null">
+				 AND to_days(b.create_date) = to_days(#{createDate}) 
+			</if>
+			GROUP BY
+				b.id,
+				b.nick_name,
+				b.phone_no,
+				b.portrait,
+				b.sex,
+				b.real_name,
+				b.create_date,
+				u.user_type,
+				b.address	
+		 order by b.create_date desc
+	
+	</select>
+	<select id="findTopThreeUser" resultMap="UserInfo">
+		SELECT
+			b.id,
+			b.nick_name AS nickName,
+			b.phone_no AS phoneNo,
+			b.portrait,
+			b.sex,
+			b.real_name AS realName,
+			b.create_date AS createDate,
+			u.user_type AS userType,
+			b.address
+		FROM
+			t_user b
+		JOIN t_user_info u ON u.user_base_id = b.id
+		WHERE
+			u.user_type = 1
+		ORDER BY
+			b.create_date DESC
+		LIMIT 0,3
+	</select>
+	
+	<select id="getUserByInfoId"  resultMap="UserInfo">
+		SELECT
+			b.id,
+			b.nick_name AS nickName,
+			b.phone_no AS phoneNo,
+			b.portrait,
+			b.sex,
+			b.real_name as realName,
+			b.create_date as createDate,
+			u.user_type as userType,
+			b.address,
+			count(o.id) as orderCount
+		FROM
+			t_user b
+		LEFT JOIN t_user_info u ON u.user_base_id = b.id
+		LEFT JOIN t_order o on u.id = o.userId and o.`status` = 1
+		WHERE
+			b.id = #{id}	
+		 order by b.create_date
+	
+	</select>
+	
 	<update id="update">
-		UPDATE t_user
-		<set>
+		UPDATE t_user set
 			<if test="realName != null and realName != ''">real_name=#{realName},</if>
 			<if test="idCard != null and idCard != ''">id_card=#{idCard},</if>
 			<if test="cityId != null and cityId != ''">city_id=#{cityId},</if>
 			<if test="nickName != null and nickName != ''">nick_name=#{nickName},</if>
 			<if test="phoneNo != null and phoneNo != ''">phone_no=#{phoneNo},</if>
 			<if test="portrait != null and portrait != ''">portrait=#{portrait},</if>
+			<if test="address != null and address != ''">address=#{address},</if>
 			<if test="sex != null">sex=#{sex},</if>
-		</set>
+			update_date = now()
 		WHERE id=#{id}
 	</update>
+	
+	<delete id="delete">
+		delete from t_user where id = #{id}
+	</delete>
 	
 </mapper>

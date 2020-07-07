@@ -43,4 +43,8 @@
         ui.user_type = 0
         where ui.id = #{userId}
     </update>
+    
+    <delete id="delete">
+		delete from t_user_info where user_base_id = #{id}
+	</delete>
 </mapper>

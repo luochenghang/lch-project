@@ -18,7 +18,7 @@ public interface SysUserService {
 	 * @param user
 	 * @return
 	 */
-	List<SysUser> findPageUser(SysUser user);
+	List<SysUser> findPageUser();
 	
 	/**
 	 * 获取用户详情
@@ -31,11 +31,20 @@ public interface SysUserService {
 	 * 保存用户信息：注册
 	 * @param user
 	 */
-	void register(SysUser user) throws ServiceException;
+	int register(SysUser user) throws ServiceException;
 	
 	/**
 	 * 删除用户
 	 * @param id
 	 */
-	void deleteSysUser(String ids) throws ServiceException;
+	int deleteSysUser(List<String> ids) throws ServiceException;
+	
+	
+	int updateSysUserStatus(Long id, Long status) throws ServiceException;
+	
+	int updateSysUser(SysUser user) throws ServiceException;
+	
+	int updateSysUser(String oldPwd, String newPwd) throws ServiceException;
+	
+	int updLoginNum(Long id) throws ServiceException;
 }

@@ -66,7 +66,7 @@ public class IdGen {
 		String number = maxPerMSECSize + poll() + "";
 		return nowLong + number.substring(1);
 	}
-
+	
 	/**
 	 * 获取十六进制的非重复订单号
 	 * @return

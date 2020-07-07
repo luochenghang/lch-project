@@ -64,4 +64,9 @@ public class UserBase extends BaseEntity<UserBase> {
 
 	//(example = "用户关注的渠道来源", value = "用户关注的渠道来源", required = false)
 	private String subscribeScene;
+	
+	private int getIsNewRecord;
+
+	private String address;
+	private int orderCount;
 }
