@@ -36,6 +36,8 @@ public final class App {
 	/** 上传的基础路径 */
 	public static final String BASE_PATH = loader.getConfigValue("base_path");
 	
+	public static final String DOMAIN_PATH = loader.getConfigValue("domain_path");
+	
 	/** 定义常量 **/
 	// 监督小程序类型
 	public static final Integer SUPERVISE_TYPE = 0;
