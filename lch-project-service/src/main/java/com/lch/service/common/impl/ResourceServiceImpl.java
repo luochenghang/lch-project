@@ -43,6 +43,11 @@ public class ResourceServiceImpl  implements ResourceService {
 	}
 
 	@Override
+	public List<FileResource> getBanner() {
+		return repo.getBanner();
+	}
+
+	@Override
 	public List<FileResource> getAllFileResource(Long status, Long type, String title) {
 		return repo.getAllFileResource(status, type, title);
 	}

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.lch.common.base.BaseRepo;
@@ -18,12 +19,15 @@ public interface PreOrderRepo extends BaseRepo<PreOrder>{
 	 * @return
 	 */
 	List<PreOrder> getAllPreOrder(Long status, Date createDate);
-	
+
 	@Update("update t_pre_order set status = #{status} where id = #{id}")
 	Integer updPreOrderStatus(Long id, Long status);
 	
 	@Update("update t_pre_order set isCollect = #{isCollect} where id = #{id}")
 	Integer updPreOrderIsCollect(Long id, Long isCollect);
+
+	@Select("select count(1) from t_pre_order where userId = #{userId} and goodsId = #{goodsId}")
+	Integer getPreOrderIsExist(Long userId, Long goodsId);
 	
 	//获取每种状态的数量
 	PreOrder getPreOrderCountGroupByStatus();

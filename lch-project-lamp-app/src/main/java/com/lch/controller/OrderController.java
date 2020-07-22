@@ -2,6 +2,7 @@ package com.lch.controller;
 
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
+import com.lch.common.config.UserUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.lamp.vo.OrderVo;
@@ -27,8 +28,9 @@ public class OrderController extends BaseController {
 	 */
 	@GetMapping("/getAllOrder")
 	@AuthIgnore(login = false)
-	public AjaxResponse getAllOrder(Long status, String orderNo, String userName, String title, Date createDate) {
-		return succees(orderService.getAllOrder(status, orderNo, userName, title, createDate));
+	public AjaxResponse getAllOrderByUserId(Long status) {
+		Long userId = UserUtils.getCurrentUserId();
+		return succees(orderService.getAllOrderByUserId(status,userId));
 	};
 
 	/**

@@ -44,4 +44,7 @@ public interface ResourceService {
 	 * @throws ServiceException
 	 */
 	Integer delFileResource(List<String> idList) throws ServiceException;
+
+	List<FileResource> getBanner();
+
 }

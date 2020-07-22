@@ -70,7 +70,25 @@
 		ORDER BY
 			t.type
 	</select>
-	
+	<select id="getBanner" resultType="FileResource">
+
+		SELECT
+		t.id,
+		t.`objId`,
+		t.sort,
+		t.`status`,
+		t.`type`,
+		t.`typeDesc`,
+		t.url,
+		t.createDate
+		FROM
+		t_file_resource t
+		WHERE
+		t.`type` = 1
+		limit 0,5
+
+	</select>
+
 	<delete id="batchDelete">
 		delete from t_file_resource where id in
 		<foreach collection="idList " item="item" open="(" close=")"

@@ -3,7 +3,9 @@ package com.lch.service.lamp;
 import java.util.List;
 
 import com.lch.common.exceptions.ServiceException;
+import com.lch.component.page.Page;
 import com.lch.entity.lamp.Goods;
+import com.lch.entity.lamp.criteria.GoodsCriteria;
 
 public interface GoodsService {
 
@@ -13,6 +15,13 @@ public interface GoodsService {
 	 * @return
 	 */
 	List<Goods> getAllGoods(Long status, Long goodsTypeId, String title);
+
+	/**
+	 * 查询全部的商品
+	 *
+	 * @return
+	 */
+	Page<Goods> getPageAllGoods(GoodsCriteria criteria);
 
 	/**
 	 * 根据id查询

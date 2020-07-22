@@ -2,6 +2,8 @@ package com.lch.repo.lamp;
 
 import java.util.List;
 
+import com.lch.entity.lamp.criteria.GoodsCriteria;
+import com.lch.entity.supervise.GiftInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -47,4 +49,5 @@ public interface GoodsRepo extends BaseRepo<Goods>{
 	 */
 	@Update("update t_goods set sellCount = sellCount + #{sellCount} where id = #{id}")
 	Integer updGoodsSellCount(Long sellCount,Long id) throws ServiceException;
+
 }

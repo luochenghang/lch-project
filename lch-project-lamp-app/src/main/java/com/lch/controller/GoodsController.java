@@ -6,6 +6,7 @@ import com.lch.common.constant.App;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.lamp.Goods;
+import com.lch.entity.lamp.criteria.GoodsCriteria;
 import com.lch.service.lamp.GoodsService;
 import com.lch.utils.DateUtils;
 import com.lch.utils.FileUtils;
@@ -25,14 +26,14 @@ public class GoodsController extends BaseController {
 	private GoodsService goodsService;
 	
 	/**
-	 * 查询全部的商品
+	 * 分页查询全部的商品
 	 * 
 	 * @return
 	 */
-	@GetMapping("/getAllGoods")
+	@GetMapping("/getPageAllGoods")
 	@AuthIgnore(login = false)
-	public AjaxResponse getAllGoods(Long status, Long goodsTypeId, String title) {
-		return succees(goodsService.getAllGoods(status, goodsTypeId, title));
+	public AjaxResponse getAllGoods(GoodsCriteria criteria) {
+		return succees(goodsService.getPageAllGoods(criteria));
 	};
 
 	/**

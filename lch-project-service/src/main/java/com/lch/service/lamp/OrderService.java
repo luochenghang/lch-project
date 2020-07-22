@@ -96,5 +96,6 @@ public interface OrderService {
 	 * @return
 	 */
 	OrderVo getEarnTotalAndOrderCount();
-	
+
+	List<OrderVo> getAllOrderByUserId(Long status,Long userId);
 }

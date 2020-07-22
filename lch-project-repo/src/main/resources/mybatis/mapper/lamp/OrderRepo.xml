@@ -322,5 +322,43 @@
 		ORDER BY
 			t.months
 	</select>
+    <select id="getAllOrderByUserId" resultType="OrderVo">
+		SELECT
+		t.id,
+		t.orderNo,
+		t.goodsId,
+		t.num,
+		t.costPrice,
+		t.sellPrice,
+		t.finalPrice,
+		t.createDate,
+		t.updateDate,
+		t.status,
+		t.userType,
+		t.userId,
+		tu.real_name as userName,
+		tu.phone_no as phone,
+		g.title,
+		g.coverImg,
+		ty.`name` as 'goodsTypeName'
+		FROM
+		t_order t
+		left JOIN t_goods g on t.goodsId = g.id
+		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+		left join t_user_info ti on t.userType = ti.user_type and ti.id = t.userId
+		left join t_user tu on ti.user_base_id = tu.id
+
+		WHERE 1=1
+		<if test="status != null">
+			AND t.status = #{status}
+		</if>
+		<if test="userId != null">
+			AND t.userId = #{userId}
+		</if>
+
+		ORDER BY t.createDate desc
+
+	</select>
 
 </mapper>

@@ -18,7 +18,7 @@ public class FileResource extends DataEntity<FileResource> {
 	private Long objId;// 业务对象id
 	private String title; //描述业务对象
 
-	private Long type;// 资源类型（1灯具首页banner轮播图）
+	private Long type;// 资源类型（1灯具首页banner轮播图 2商品轮播图 3商品细节图）
 	private String typeDesc;// 资源类型描述
 	
 	private Long status; //1正常 0禁用

@@ -24,16 +24,12 @@ public class FileResourceController extends BaseController {
 	private ResourceService resourceService;
 
 
-	//获取所有资源根据类型分组
-	@GetMapping("/getAllFileResourceGroupByType")
-	public AjaxResponse getAllFileResourceGroupByType() {
-		return succees(resourceService.getAllFileResourceGroupByType());
+	//查询banner图
+	@GetMapping("/getBanner")
+	public AjaxResponse getBanner() {
+		return succees(resourceService.getBanner());
 	}
 
-	//获取所有资源
-	@GetMapping("/getAllFileResource")
-	public AjaxResponse getAllFileResource(Long status, Long type, String title) {
-		return succees(resourceService.getAllFileResource(status, type, title));
-	}
+
 
 }

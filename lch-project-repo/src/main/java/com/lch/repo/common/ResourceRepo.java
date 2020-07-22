@@ -52,4 +52,6 @@ public interface ResourceRepo {
 	 */
 	@Delete("delete from t_file_resource where objId = #{objId} and type = #{type}")
 	Integer delFilesByObjIdAndType(@Param("objId")Long objId, @Param("type")Long type);
+
+	List<FileResource> getBanner();
 }

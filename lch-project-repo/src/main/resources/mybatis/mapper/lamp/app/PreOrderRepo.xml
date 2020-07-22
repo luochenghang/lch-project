@@ -18,7 +18,7 @@
 		left join t_user_info ti on ti.id = t.userId
 		left join t_user tu on ti.user_base_id = tu.id
 		 		
-		WHERE 1=1
+		WHERE t.isCollect = 1
 		<if test="status != null">
 			AND t.status = #{status}
 		</if>
