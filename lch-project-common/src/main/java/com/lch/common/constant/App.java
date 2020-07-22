@@ -23,6 +23,16 @@ public final class App {
 	/** 监督小程序缓存的accessToken的key **/
 	public static final String REDIS_SUPERVISE_TOKEN_KEY = "supervise_user_token";
 
+
+	/** 家贝斯小程序appId appSecret **/
+	public static final String JBSLAMP_APPID = loader.getConfigValue("wx.jbslamp.app.id");
+
+	public static final String JBSLAMP_APP_SECRET = loader.getConfigValue("wx.jbslamp.app.secret");
+
+	/** 家贝斯小程序缓存的accessToken的key **/
+	public static final String REDIS_JBSLAMP_TOKEN_KEY = "jbslamp_user_token";
+
+
 	/** 上传的基础路径 */
 	public static final String BASE_PATH = loader.getConfigValue("base_path");
 	
@@ -35,6 +45,9 @@ public final class App {
 	
 	public static final Long DEFEAT_MIN_POINT = 10L;
 	public static final Long DEFEAT_MAX_POINT = 15L;
+
+
+	public static final Integer JBS_TYPE = 1;
 	
 	
 	//web常量类型

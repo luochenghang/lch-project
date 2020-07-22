@@ -24,7 +24,7 @@ public class UserInfo extends BaseEntity<UserInfo> {
 	//(value = "密码", required = true)
 	private String pwd;
 
-	//(value = "用户类型(0监督小程序)", required = true)
+	//(value = "用户类型", required = true)
 	private Integer userType;
 
 	//(value = "状态(0正常 1禁用 2删除)", required = true)

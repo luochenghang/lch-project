@@ -11,7 +11,7 @@ import com.lch.component.filter.LoginFilter;
 @Configuration
 public class Filter {
 
-	private static final String URL_MATCH = "/api/*";
+	private static final String URL_MATCH = "/lampApp/*";
 
 	//** 访问控制Filter **//
 	@Bean

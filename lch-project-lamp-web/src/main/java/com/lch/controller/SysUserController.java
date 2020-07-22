@@ -62,10 +62,10 @@ public class SysUserController extends BaseController {
 		if (!MD5Util.validPassword(pwd, sysUser.getPwd()))
 			return fail("密码错误");
 
-		String ip  = CodeUtil.getIpAddr(req);
-		if(redisUtil.get(ip + "code") == null || !redisUtil.get(ip + "code").toString().toLowerCase().equals(code.toLowerCase())) {
-			return fail("验证码错误或者失效！");
-		}
+//		String ip  = CodeUtil.getIpAddr(req);
+//		if(redisUtil.get(ip + "code") == null || !redisUtil.get(ip + "code").toString().toLowerCase().equals(code.toLowerCase())) {
+//			return fail("验证码错误或者失效！");
+//		}
 		//更新登陆次数和时间
 		sysUserService.updLoginNum(sysUser.getId());
 		// 验证通过，则同步到redis缓存
@@ -153,36 +153,36 @@ public class SysUserController extends BaseController {
 	
 	/*************************************************************/
 	//生成验证码
-	@AuthIgnore(login = false)
-	@GetMapping("/getCode")
-	public void getCode(HttpServletRequest req, HttpServletResponse resp) throws ServiceException {
-		 // 调用工具类生成的验证码和验证码图片
-        Map<String, Object> codeMap = CodeUtil.generateCodeAndPic();
-
-        // 将四位数字的验证码保存到Session中。
-       // HttpSession session = req.getSession();
-       // session.setAttribute("code", codeMap.get("code").toString());
-        String ip  = CodeUtil.getIpAddr(req);
-        redisUtil.del(ip + "code");
-        redisUtil.set(ip + "code", codeMap.get("code").toString(), 60L);//过期时间60秒
-
-        // 禁止图像缓存。
-        resp.setHeader("Pragma", "no-cache");
-        resp.setHeader("Cache-Control", "no-cache");
-        resp.setDateHeader("Expires", -1);
-
-        resp.setContentType("image/jpeg");
-
-        // 将图像输出到Servlet输出流中。
-        ServletOutputStream sos;
-        try {
-            sos = resp.getOutputStream();
-            ImageIO.write((RenderedImage) codeMap.get("codePic"), "jpeg", sos);
-            sos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-	}
+//	@AuthIgnore(login = false)
+//	@GetMapping("/getCode")
+//	public void getCode(HttpServletRequest req, HttpServletResponse resp) throws ServiceException {
+//		 // 调用工具类生成的验证码和验证码图片
+//        Map<String, Object> codeMap = CodeUtil.generateCodeAndPic();
+//
+//        // 将四位数字的验证码保存到Session中。
+//       // HttpSession session = req.getSession();
+//       // session.setAttribute("code", codeMap.get("code").toString());
+//        String ip  = CodeUtil.getIpAddr(req);
+//        redisUtil.del(ip + "code");
+//        redisUtil.set(ip + "code", codeMap.get("code").toString(), 60L);//过期时间60秒
+//
+//        // 禁止图像缓存。
+//        resp.setHeader("Pragma", "no-cache");
+//        resp.setHeader("Cache-Control", "no-cache");
+//        resp.setDateHeader("Expires", -1);
+//
+//        resp.setContentType("image/jpeg");
+//
+//        // 将图像输出到Servlet输出流中。
+//        ServletOutputStream sos;
+//        try {
+//            sos = resp.getOutputStream();
+//            ImageIO.write((RenderedImage) codeMap.get("codePic"), "jpeg", sos);
+//            sos.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//	}
 	
 
 }
