@@ -26,6 +26,7 @@ public class FileResourceController extends BaseController {
 
 	//查询banner图
 	@GetMapping("/getBanner")
+	@AuthIgnore(login = false)
 	public AjaxResponse getBanner() {
 		return succees(resourceService.getBanner());
 	}

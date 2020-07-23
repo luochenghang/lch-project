@@ -54,4 +54,6 @@ public interface OrderRepo extends BaseRepo<OrderVo>{
 	OrderVo getEarnTotalAndOrderCount();
 
     List<OrderVo> getAllOrderByUserId(Long status, Long userId);
+
+    List<OrderVo> getTop5GoodsDynamic();
 }

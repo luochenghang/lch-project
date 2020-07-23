@@ -147,5 +147,10 @@ public class OrderServiceImpl extends DataService<OrderRepo, OrderVo> implements
         return repo.getAllOrderByUserId(status, userId);
     }
 
+    @Override
+    public List<OrderVo> getTop5GoodsDynamic() {
+        return repo.getTop5GoodsDynamic();
+    }
+
 
 }

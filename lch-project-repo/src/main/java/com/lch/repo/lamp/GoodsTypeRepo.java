@@ -19,7 +19,7 @@ public interface GoodsTypeRepo extends BaseRepo<GoodsType>{
 	 * 
 	 * @return
 	 */
-	List<GoodsType> getAllGoodsType(Long status);
+	List<GoodsType> getAllGoodsType(@Param("status") Long status);
 	
 	/**
 	 * 启用 禁用

@@ -34,6 +34,17 @@ public class OrderController extends BaseController {
 	};
 
 	/**
+	 * 获取最新的前五个订单
+	 *
+	 * @return
+	 */
+	@GetMapping("/getTop5GoodsDynamic")
+	@AuthIgnore(login = false)
+	public AjaxResponse getTop5GoodsDynamic() {
+		return succees(orderService.getTop5GoodsDynamic());
+	};
+
+	/**
 	 * 根据id查询
 	 * 
 	 * @param id
