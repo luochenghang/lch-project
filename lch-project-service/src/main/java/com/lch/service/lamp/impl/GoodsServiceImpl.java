@@ -30,7 +30,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
     @Override
     public List<Goods> getAllGoods(Long status, Long goodsTypeId, String title) {
 
-        return repo.getAllGoods(status, goodsTypeId, title);
+        return repo.getAllGoods(status, goodsTypeId, title, null);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
         setPage(criteria);
         return PageAdapter.adpater(new PageInfo<Goods>(
                 repo.getAllGoods(criteria.getStatus(), criteria.getGoodsTypeId(),
-                        criteria.getQueryStr())));
+                        criteria.getQueryStr(),criteria.getOrderBy())));
     }
 
     @Override

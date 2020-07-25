@@ -64,7 +64,15 @@
 		<if test="goodsTypeId != null">
 			AND t.goodsTypeId  = #{goodsTypeId}
 		</if>
-		ORDER BY t.createDate desc
+		<if test="orderBy == null or orderBy =='' " >
+			ORDER BY t.createDate desc
+		</if>
+		<if test="orderBy == 'sellCount'" >
+			ORDER BY t.sellCount desc
+		</if>
+		<if test="orderBy == 'sellPrice'" >
+			ORDER BY t.sellPrice desc
+		</if>
 	</select>
 
 	<insert id="insert"  useGeneratedKeys="true" keyProperty="id">

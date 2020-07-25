@@ -16,6 +16,8 @@ public class GoodsCriteria extends Criteria{
 
 	private Long goodsTypeId; // 商品类型
 
+	private String orderBy; //根据什么排序  null 或者'' 根据创建时间降序 sellPrice 根据价格排序  sellCount 根据销售数量倒叙
+
 	
 	
 }
