@@ -43,4 +43,6 @@ public class Goods extends DataEntity<Goods> {
 
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date updateDate; // 更新时间
+
+	private  int isCollect; //该商品是否在当前用户下收藏 1已收藏 0为收藏
 }

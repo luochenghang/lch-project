@@ -50,9 +50,15 @@
 		t.`status`,
 		t.createDate,
 		t.updateDate
+		<if test="userId != null">
+			,case when IFNULL(p.id, null) is null then '0' else '1' end as isCollect
+		</if>
 		FROM
 		t_goods t
 		JOIN t_goods_type d ON t.goodsTypeId = d.id
+		<if test="userId != null">
+			left join t_pre_order p on t.id = p.goodsId and p.userId = #{userId} and p.isCollect =1
+		</if>
 		WHERE 1=1
 		<!-- 关键字查询 -->
 		<if test="title != null and title != ''">

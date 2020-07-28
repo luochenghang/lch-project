@@ -20,7 +20,7 @@ public interface GoodsRepo extends BaseRepo<Goods>{
 	 * 查询全部的商品
 	 * @return
 	 */
-	List<Goods> getAllGoods(Long status, Long goodsTypeId, String title, String orderBy);
+	List<Goods> getAllGoods(Long status, Long goodsTypeId, String title, String orderBy, Long userId);
 	
 	/**
 	 * 通过title 和type 查询是否存在产品

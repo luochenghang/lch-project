@@ -133,5 +133,10 @@ public class PreOrderServiceImpl extends DataService<PreOrderRepo, PreOrder> imp
         return 1;
     }
 
+    @Override
+    public List<PreOrder> getPreOrderByUserId(Long id) {
+        return repo.getPreOrderByUserId(id);
+    }
+
 
 }

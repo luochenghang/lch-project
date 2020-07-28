@@ -5,6 +5,7 @@ import com.lch.common.config.AjaxResponse;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.lamp.PreOrder;
+import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.PreOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,13 @@ public class PreOrderController extends BaseController {
 	public AjaxResponse getPreOrderById(Long id) {
 		return succees(preOrderService.getPreOrderById(id));
 	};
-	
+
+	@GetMapping("/getPreOrderByUserId")
+	public AjaxResponse getPreOrderByUserId() {
+		Long id = TokenServiceImpl.getCurrentUserId();
+		return succees(preOrderService.getPreOrderByUserId(id));
+	};
+
 
 	//获取每种状态的数量
 	@GetMapping("/getPreOrderCountGroupByStatus")

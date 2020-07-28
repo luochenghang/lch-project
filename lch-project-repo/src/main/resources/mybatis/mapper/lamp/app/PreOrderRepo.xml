@@ -79,6 +79,24 @@
 		(select COUNT(1) from t_pre_order where status = 2 and isCollect = 1 ) as noDoPreOrderCount
 	
 	</select>
-	
+    <select id="getPreOrderByUserId" resultType="com.lch.entity.lamp.PreOrder">
+		SELECT
+		t.*,
+		tu.real_name as userName,
+		tu.phone_no as phone,
+		g.title,
+		g.coverImg,
+		ty.`name` as 'goodsTypeName'
+		FROM
+		t_pre_order t
+		left JOIN t_goods g on t.goodsId = g.id
+		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+		left join t_user_info ti on  ti.id = t.userId
+		left join t_user tu on ti.user_base_id = tu.id
+		WHERE t.userId=#{userId}
+
+	</select>
+
 
 </mapper>

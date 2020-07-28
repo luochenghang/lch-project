@@ -32,4 +32,6 @@ public interface PreOrderService {
 	PreOrder getPreOrderCountGroupByStatus();
 
 	int batchAddOrder(List<String> ids) throws ServiceException;
+
+	List<PreOrder> getPreOrderByUserId(Long id);
 }

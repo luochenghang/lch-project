@@ -31,6 +31,7 @@ public interface PreOrderRepo extends BaseRepo<PreOrder>{
 	
 	//获取每种状态的数量
 	PreOrder getPreOrderCountGroupByStatus();
-	
-	
+
+
+    List<PreOrder> getPreOrderByUserId(Long userId);
 }

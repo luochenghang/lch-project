@@ -10,6 +10,7 @@ import com.lch.entity.lamp.Goods;
 import com.lch.entity.lamp.criteria.GoodsCriteria;
 import com.lch.repo.common.ResourceRepo;
 import com.lch.repo.lamp.GoodsRepo;
+import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.GoodsService;
 import com.lch.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
     @Override
     public List<Goods> getAllGoods(Long status, Long goodsTypeId, String title) {
 
-        return repo.getAllGoods(status, goodsTypeId, title, null);
+        return repo.getAllGoods(status, goodsTypeId, title, null, null);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
         setPage(criteria);
         return PageAdapter.adpater(new PageInfo<Goods>(
                 repo.getAllGoods(criteria.getStatus(), criteria.getGoodsTypeId(),
-                        criteria.getQueryStr(),criteria.getOrderBy())));
+                        criteria.getQueryStr(),criteria.getOrderBy(), TokenServiceImpl.getCurrentUserId())));
     }
 
     @Override
