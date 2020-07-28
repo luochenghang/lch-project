@@ -1,12 +1,13 @@
 package com.lch;
 
+import com.lch.service.login.AccessFilter;
+import com.lch.service.login.LoginFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import com.lch.component.filter.AccessFilter;
-import com.lch.component.filter.LoginFilter;
+
 
 @Configuration
 public class Filter {

@@ -68,5 +68,7 @@ public class UserBase extends BaseEntity<UserBase> {
 	private int getIsNewRecord;
 
 	private String address;
-	private int orderCount;
+	private int orderCount;//已完成订单数量
+	private int favCount; // 收藏数量
+	private Double savePrice; //节约金额
 }

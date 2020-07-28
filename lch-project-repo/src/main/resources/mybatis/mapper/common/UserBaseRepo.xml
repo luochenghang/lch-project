@@ -46,6 +46,8 @@
 		<result column="createDate" property="userBase.createDate" />
 		<result column="address" property="userBase.address" />
 		<result column="orderCount" property="userBase.orderCount" />
+		<result column="favCount" property="userBase.favCount" />
+		<result column="savePrice" property="userBase.savePrice" />
 	</resultMap>
 	
 	<select id="getAllUser" resultMap="UserInfo">
@@ -120,11 +122,14 @@
 			b.create_date as createDate,
 			u.user_type as userType,
 			b.address,
-			count(o.id) as orderCount
+			count(o.id) as orderCount,
+			IFNULL(sum(o.sellPrice),0) * 0.1 as savePrice,
+			count(p.id) as favCount
 		FROM
 			t_user b
 		LEFT JOIN t_user_info u ON u.user_base_id = b.id
 		LEFT JOIN t_order o on u.id = o.userId and o.`status` = 1
+		LEFT JOIN t_pre_order p on p.userId = u.id and p.isCollect = 1
 		WHERE
 			b.id = #{id}	
 		 order by b.create_date

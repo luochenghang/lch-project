@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import com.lch.component.filter.AccessFilter;
-import com.lch.component.filter.LoginFilter;
+import com.lch.service.login.AccessFilter;
+import com.lch.service.login.LoginFilter;
 
 @Configuration
 public class Filter {

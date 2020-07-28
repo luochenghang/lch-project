@@ -5,14 +5,13 @@ import com.lch.common.config.AjaxResponse;
 import com.lch.common.constant.App;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
-import com.lch.entity.common.UserBase;
 import com.lch.entity.common.bo.UlBo;
+import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.UseUserService;
-import com.lch.service.subpervise.UserService;
+import com.lch.service.lamp.wechat.LampUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -26,13 +25,14 @@ public class UseUserController extends BaseController {
 
 
 	@GetMapping("/getUser")
-	public AjaxResponse getUser(Long id) {
+	public AjaxResponse getUser() {
+		Long id = TokenServiceImpl.getCurrentUserId();
 		return succees(userUserService.getUser(id));
 	}
 
 
 	@Autowired
-	private UserService userService;
+	private LampUserService userService;
 
 
 	@AuthIgnore(login = false)

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.lch.common.base.BaseService;
-import com.lch.common.config.UserUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.wechat.wxprogram.WeChatSession;
 import com.lch.component.wechat.wxprogram.WeChatUtils;
@@ -28,7 +27,10 @@ import com.lch.utils.StringUtils;
 public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> implements IUser {
 
 	@Autowired
-	protected UserInfoRepo userInfoRepo;
+	private UserInfoRepo userInfoRepo;
+
+	@Autowired
+	private TokenService tokenService;
 
 
 	/**
@@ -48,7 +50,7 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 			doThrow("当前账号已被禁用，请联系客服处理");
 		}
 		//用户登录
-		String token = UserUtils.login(uid);
+		String token = tokenService.login(uid);
 		//封装返回值
 		Map<String, Object> map = Maps.newHashMap();
 		map.put("token", token);
@@ -71,7 +73,7 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 			try {
 				phone = map.get("phoneNumber");
 				if (StringUtils.isNotBlank(phone)) {
-					repo.updateUserPhone(phone, UserUtils.getCurrentUserId());
+					repo.updateUserPhone(phone, TokenServiceImpl.getCurrentUserId());
 				}
 			}
 			catch (Exception e) {
@@ -84,7 +86,6 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 
 	/**
 	 * 保存用户信息
-	 * @param vo
 	 * @param src
 	 * @param appid
 	 * @param appSecret
@@ -92,7 +93,7 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 	 * @throws ServiceException
 	 */
 	@Transactional(readOnly = false)
-	private UserInfo save(UlBo bo, String src, String appid, String appSecret) throws ServiceException {
+	public UserInfo save(UlBo bo, String src, String appid, String appSecret) throws ServiceException {
 		// 解析用户openid
 		String openid = this.decipherOpenid(bo, appid, appSecret);
 		// 判断用户信息是否存在
@@ -169,7 +170,6 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 
 	/**
 	 * 解析用户unionid
-	 * @param bo
 	 * @return
 	 * @throws ServiceException
 	 */

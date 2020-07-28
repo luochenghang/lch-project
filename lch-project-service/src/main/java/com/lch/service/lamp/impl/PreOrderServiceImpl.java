@@ -2,7 +2,6 @@ package com.lch.service.lamp.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.lch.common.base.DataService;
-import com.lch.common.config.UserUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.page.Page;
 import com.lch.component.page.PageAdapter;
@@ -13,6 +12,7 @@ import com.lch.entity.lamp.vo.OrderVo;
 import com.lch.repo.lamp.GoodsRepo;
 import com.lch.repo.lamp.OrderRepo;
 import com.lch.repo.lamp.app.PreOrderRepo;
+import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.PreOrderService;
 import com.lch.utils.IdGen;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,20 +72,17 @@ public class PreOrderServiceImpl extends DataService<PreOrderRepo, PreOrder> imp
 
     @Override
     public int delPreOrder(List<String> idList) throws ServiceException {
-        // TODO Auto-generated method stub
         return repo.batchDelete(idList);
     }
 
     @Override
     public PreOrder getPreOrderById(Long id) {
-        // TODO Auto-generated method stub
         return repo.get(id);
     }
 
     @Override
     public int addPreOrder(PreOrder preOrder) throws ServiceException {
-        // TODO Auto-generated method stub
-        Long userId = UserUtils.getCurrentUserId();
+        Long userId = TokenServiceImpl.getCurrentUserId();
         if (userId == null) {
             doThrow("请登录");
         }
