@@ -3,6 +3,8 @@ package com.lch.service.common.handle;
 import java.util.Date;
 import java.util.Map;
 
+import com.lch.common.config.JwtUtils;
+import com.lch.common.config.UserSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +31,6 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 	@Autowired
 	private UserInfoRepo userInfoRepo;
 
-	@Autowired
-	private TokenService tokenService;
-
-
 	/**
 	 * 封装返回值
 	 * @param map
@@ -50,7 +48,10 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 			doThrow("当前账号已被禁用，请联系客服处理");
 		}
 		//用户登录
-		String token = tokenService.login(uid);
+		//String token = tokenService.login(uid);
+		String token = JwtUtils.generatorToken(uid.toString());
+		// 存在用户id，则保存
+		UserSessionUtils.setCurrentUserId(Long.valueOf(uid));
 		//封装返回值
 		Map<String, Object> map = Maps.newHashMap();
 		map.put("token", token);
@@ -73,7 +74,7 @@ public abstract class UserHandle extends BaseService<UserBaseRepo, UserBase> imp
 			try {
 				phone = map.get("phoneNumber");
 				if (StringUtils.isNotBlank(phone)) {
-					repo.updateUserPhone(phone, TokenServiceImpl.getCurrentUserId());
+					repo.updateUserPhone(phone, UserSessionUtils.getCurrentUserId());
 				}
 			}
 			catch (Exception e) {

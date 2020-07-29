@@ -1,15 +1,12 @@
 package com.lch.service.login;
 
 import com.google.common.collect.Lists;
-import com.lch.common.config.UserUtils;
+import com.lch.common.config.CheckResult;
+import com.lch.common.config.JwtUtils;
 import com.lch.common.enums.ResponseCode;
 import com.lch.component.annotation.auth.AuthIgnoreScan;
-import com.lch.entity.common.bo.Token;
-import com.lch.service.common.handle.TokenService;
-import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.utils.HttpUtils;
 import com.lch.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -17,13 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.lch.common.config.JwtUtils.JWT_KEY_USER_ID;
+
 /**
  * 登录过滤器
  */
 public class LoginFilter implements Filter {
 
-    @Autowired
-    private TokenService tokenService;
 
     //不需要拦截的url
     private List<String> outFilter = Lists.newArrayList();
@@ -38,7 +35,7 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         // 若用户已登录则直接放行
-        if (outFilter.contains(request.getRequestURI()) || "options".equalsIgnoreCase(request.getMethod()) || TokenServiceImpl.isLogin()) {
+        if (outFilter.contains(request.getRequestURI()) || "options".equalsIgnoreCase(request.getMethod())) {
             chain.doFilter(request, response);
             return;
         }
@@ -49,15 +46,15 @@ public class LoginFilter implements Filter {
             HttpUtils.onAccessDenied(response, ResponseCode.NOLOGIN.getCode(), "暂未登录");
             return;
         }
-        // 存在从redis中获取用户id
+        // 存在从redis中获取用户id  改为jwt模式
         String uid = null;
-        Token userByToken = tokenService.findUserByToken(token);
-        if (userByToken == null) {
+        CheckResult checkResult = JwtUtils.validateJWT(token);
+        if (checkResult == null) {
             HttpUtils.onAccessDenied(response, ResponseCode.NOLOGIN.getCode(), "暂未登录");
             return;
         }
         try {
-            uid = String.valueOf(userByToken.getUserId());
+            uid = checkResult.getClaims().get(JWT_KEY_USER_ID).toString();
         } catch (Exception e) {
             HttpUtils.onAccessDenied(response, ResponseCode.NOLOGIN.getCode(), "登录已过期");
             return;
@@ -66,8 +63,6 @@ public class LoginFilter implements Filter {
             HttpUtils.onAccessDenied(response, ResponseCode.NOLOGIN.getCode(), "登录已过期");
             return;
         }
-        // 存在用户id，则保存
-        TokenServiceImpl.setCurrentUserId(Long.valueOf(uid));
         chain.doFilter(request, response);
     }
 

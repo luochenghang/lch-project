@@ -2,16 +2,15 @@ package com.lch.controller;
 
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
+import com.lch.common.config.UserSessionUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.lamp.PreOrder;
-import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.PreOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping("/lampApp/v1")
@@ -46,7 +45,7 @@ public class PreOrderController extends BaseController {
 
 	@GetMapping("/getPreOrderByUserId")
 	public AjaxResponse getPreOrderByUserId() {
-		Long id = TokenServiceImpl.getCurrentUserId();
+		Long id = UserSessionUtils.getCurrentUserId();
 		return succees(preOrderService.getPreOrderByUserId(id));
 	};
 

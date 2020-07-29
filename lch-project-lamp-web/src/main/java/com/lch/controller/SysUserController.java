@@ -2,12 +2,12 @@ package com.lch.controller;
 
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
+import com.lch.common.config.JwtUtils;
+import com.lch.common.config.UserSessionUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.common.authority.SysUser;
 import com.lch.service.common.SysUserService;
-import com.lch.service.common.handle.TokenService;
-import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.utils.MD5Util;
 import com.lch.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,6 @@ public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
 
-    @Autowired
-    private TokenService tokenService;
 
 
     // 登录接口
@@ -56,7 +54,10 @@ public class SysUserController extends BaseController {
         //更新登陆次数和时间
         sysUserService.updLoginNum(sysUser.getId());
         // 验证通过，则同步到数据库
-        String token = tokenService.login(sysUser.getId());
+        //String token = tokenService.login(sysUser.getId());
+        String token = JwtUtils.generatorToken(sysUser.getId().toString());
+        // 存在用户id，则保存
+        UserSessionUtils.setCurrentUserId(Long.valueOf(sysUser.getId()));
         return succees(token);
     }
 
@@ -68,7 +69,7 @@ public class SysUserController extends BaseController {
 
     @PostMapping("/logout")
     public AjaxResponse loginout(HttpServletRequest request) {
-        tokenService.logout(request.getHeader("token"));
+        JwtUtils.removeToken(request.getHeader("token"));
         return succees();
     }
 
@@ -120,7 +121,7 @@ public class SysUserController extends BaseController {
 
     @GetMapping("/getLoginUserInfo")
     public AjaxResponse getLoginUserInfo() throws ServiceException {
-        Long uid = TokenServiceImpl.getCurrentUserId();
+        Long uid = UserSessionUtils.getCurrentUserId();
         if (uid != null) {
             return succees(sysUserService.getSysUser(uid));
         }
@@ -129,7 +130,7 @@ public class SysUserController extends BaseController {
 
     @PostMapping("/updateLoginUserInfo")
     public AjaxResponse updateLoginUserInfo(SysUser sysUser) throws ServiceException {
-        Long uid = TokenServiceImpl.getCurrentUserId();
+        Long uid = UserSessionUtils.getCurrentUserId();
 
         if (uid != null) {
             sysUser.setId(uid);

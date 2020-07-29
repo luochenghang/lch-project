@@ -2,6 +2,7 @@ package com.lch.service.lamp.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.lch.common.base.DataService;
+import com.lch.common.config.UserSessionUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.page.Page;
 import com.lch.component.page.PageAdapter;
@@ -10,7 +11,6 @@ import com.lch.entity.lamp.Goods;
 import com.lch.entity.lamp.criteria.GoodsCriteria;
 import com.lch.repo.common.ResourceRepo;
 import com.lch.repo.lamp.GoodsRepo;
-import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.GoodsService;
 import com.lch.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
         setPage(criteria);
         return PageAdapter.adpater(new PageInfo<Goods>(
                 repo.getAllGoods(criteria.getStatus(), criteria.getGoodsTypeId(),
-                        criteria.getQueryStr(),criteria.getOrderBy(), TokenServiceImpl.getCurrentUserId())));
+                        criteria.getQueryStr(),criteria.getOrderBy(), UserSessionUtils.getCurrentUserId())));
     }
 
     @Override

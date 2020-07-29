@@ -6,7 +6,6 @@ import com.lch.common.constant.App;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.common.bo.UlBo;
-import com.lch.service.common.handle.TokenServiceImpl;
 import com.lch.service.lamp.UseUserService;
 import com.lch.service.lamp.wechat.LampUserService;
 import org.springframework.beans.factory.annotation.Autowired;
