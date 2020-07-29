@@ -82,6 +82,18 @@ public class PreOrderController extends BaseController {
 
 		return succees(preOrderService.addPreOrder(preOrder));
 	};
-	
+
+	/**
+	 * 删除收藏
+	 * @param id
+	 * @param isCollect
+	 * @return
+	 * @throws ServiceException
+	 */
+	@PostMapping("/updPreOrderIsCollect")
+	public AjaxResponse updPreOrderIsCollect(Long id, Long isCollect) throws ServiceException {
+
+		return succees(preOrderService.updPreOrderIsCollect(id,isCollect));
+	};
 	
 }

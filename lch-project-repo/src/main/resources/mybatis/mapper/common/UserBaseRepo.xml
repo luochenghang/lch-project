@@ -61,11 +61,10 @@
 			b.create_date as createDate,
 			u.user_type as userType,
 			b.address,
-			count(o.id) as orderCount
+		    (select count(1) from t_order o where u.id = o.userId and o.`status` = 1)   as orderCount,
 		FROM
 			t_user b
 		LEFT JOIN t_user_info u ON u.user_base_id = b.id
-		LEFT JOIN t_order o on u.id = o.userId and o.`status` = 1
 		WHERE
 			1=1
 			<if test="queryStr !=null and queryStr !=''">
@@ -122,14 +121,12 @@
 			b.create_date as createDate,
 			u.user_type as userType,
 			b.address,
-			count(o.id) as orderCount,
-			IFNULL(sum(o.sellPrice),0) * 0.1 as savePrice,
-			count(p.id) as favCount
+			(select count(1) from t_order o where u.id = o.userId and o.`status` = 1)   as orderCount,
+			(select IFNULL(sum(o.sellPrice),0) * 0.1 from t_order o where u.id = o.userId and o.`status` = 1)   as savePrice,
+ 			(select count(1) from t_pre_order p where p.userId = u.id and p.isCollect = 1) as favCount
 		FROM
 			t_user b
 		LEFT JOIN t_user_info u ON u.user_base_id = b.id
-		LEFT JOIN t_order o on u.id = o.userId and o.`status` = 1
-		LEFT JOIN t_pre_order p on p.userId = u.id and p.isCollect = 1
 		WHERE
 			b.id = #{id}	
 		 order by b.create_date

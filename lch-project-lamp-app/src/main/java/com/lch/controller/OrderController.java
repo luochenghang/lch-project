@@ -26,11 +26,9 @@ public class OrderController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@GetMapping("/getAllOrder")
-	@AuthIgnore(login = false)
+	@GetMapping("/getAllOrderByUserId")
 	public AjaxResponse getAllOrderByUserId(Long status) {
-		Long userId = UserUtils.getCurrentUserId();
-		return succees(orderService.getAllOrderByUserId(status,userId));
+		return succees(orderService.getAllOrderByUserId(status));
 	};
 
 	/**

@@ -1,6 +1,7 @@
 package com.lch.service.lamp.impl;
 
 import com.lch.common.base.DataService;
+import com.lch.common.config.UserSessionUtils;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.entity.common.UserBase;
 import com.lch.entity.lamp.EchartsData;
@@ -143,7 +144,9 @@ public class OrderServiceImpl extends DataService<OrderRepo, OrderVo> implements
     }
 
     @Override
-    public List<OrderVo> getAllOrderByUserId(Long status, Long userId) {
+    public List<OrderVo> getAllOrderByUserId(Long status) {
+
+        Long userId = UserSessionUtils.getCurrentUserId();
         return repo.getAllOrderByUserId(status, userId);
     }
 

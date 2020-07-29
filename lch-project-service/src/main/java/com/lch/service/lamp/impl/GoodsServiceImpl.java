@@ -44,7 +44,7 @@ public class GoodsServiceImpl extends DataService<GoodsRepo, Goods> implements G
 
     @Override
     public Goods getGoodsById(Long id) {
-        return repo.get(id);
+        return repo.get(id,UserSessionUtils.getCurrentUserId());
     }
 
     @Override

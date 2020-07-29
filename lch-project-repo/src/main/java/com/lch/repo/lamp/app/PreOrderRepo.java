@@ -23,11 +23,11 @@ public interface PreOrderRepo extends BaseRepo<PreOrder>{
 	@Update("update t_pre_order set status = #{status} where id = #{id}")
 	Integer updPreOrderStatus(Long id, Long status);
 	
-	@Update("update t_pre_order set isCollect = #{isCollect} where id = #{id}")
-	Integer updPreOrderIsCollect(Long id, Long isCollect);
+	@Update("update t_pre_order set isCollect = #{isCollect} where id = #{id} and userId = #{userId}")
+	Integer updPreOrderIsCollect(Long id,Long userId, Long isCollect);
 
-	@Select("select count(1) from t_pre_order where userId = #{userId} and goodsId = #{goodsId}")
-	Integer getPreOrderIsExist(Long userId, Long goodsId);
+	@Select("select * from t_pre_order where userId = #{userId} and goodsId = #{goodsId}")
+	PreOrder getPreOrderIsExist(Long userId, Long goodsId);
 	
 	//获取每种状态的数量
 	PreOrder getPreOrderCountGroupByStatus();

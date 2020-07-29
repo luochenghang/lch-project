@@ -97,7 +97,7 @@ public interface OrderService {
 	 */
 	OrderVo getEarnTotalAndOrderCount();
 
-	List<OrderVo> getAllOrderByUserId(Long status,Long userId);
+	List<OrderVo> getAllOrderByUserId(Long status);
 
 	List<OrderVo> getTop5GoodsDynamic();
 }

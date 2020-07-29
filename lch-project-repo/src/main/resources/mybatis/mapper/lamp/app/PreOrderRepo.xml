@@ -34,7 +34,7 @@
 			userId,
 			goodsId,
 			status,
-			finalPrice,
+			sellPrice,
 			createDate,
 			updateDate
 		)
@@ -42,7 +42,7 @@
 		#{userId},
 		#{goodsId},
 		0,
-		#{finalPrice},
+		#{sellPrice},
 		NOW(),
 		NOW()
 		FROM
@@ -95,6 +95,7 @@
 		left join t_user_info ti on  ti.id = t.userId
 		left join t_user tu on ti.user_base_id = tu.id
 		WHERE t.userId=#{userId}
+		and t.isCollect = 1
 
 	</select>
 

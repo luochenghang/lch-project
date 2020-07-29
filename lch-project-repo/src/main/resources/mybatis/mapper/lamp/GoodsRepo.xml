@@ -12,6 +12,7 @@
 		<result column="costPrice" property="costPrice" />
 		<result column="sellPrice" property="sellPrice" />
 		<result column="sellCount" property="sellCount" />
+		<result column="isCollect" property="isCollect" />
 		<result column="status" property="status" />
 		<result column="createDate" property="createDate" />
 		<result column="updateDate" property="updateDate" />
@@ -140,9 +141,17 @@
 		t.`status`,
 		t.createDate,
 		t.updateDate
+
+		<if test="userId != null">
+			,case when IFNULL(p.id, null) is null then '0' else '1' end as isCollect
+		</if>
 		FROM
 		t_goods t
 		JOIN t_goods_type d ON t.goodsTypeId = d.id
+		<if test="userId != null">
+			left join t_pre_order p on t.id = p.goodsId and p.userId = #{userId} and p.isCollect =1
+		</if>
+
 		WHERE
 		t.id=#{id}
 	</select>

@@ -86,16 +86,25 @@ public class PreOrderServiceImpl extends DataService<PreOrderRepo, PreOrder> imp
         if (userId == null) {
             doThrow("请登录");
         }
-        if (repo.getPreOrderIsExist(userId, preOrder.getGoodsId()) != 0) {
-			doThrow("你已经收藏过这个商品了");
+        PreOrder preOrderIsExist = repo.getPreOrderIsExist(userId, preOrder.getGoodsId());
+        if (preOrderIsExist != null) {
+            //以前已经收藏过了
+            if (preOrderIsExist.getIsCollect() == 1){
+                doThrow("你已经收藏过这个商品了");
+            }else{
+                //修改收藏状态
+                return repo.updPreOrderIsCollect(preOrder.getGoodsId(),userId,1L);
+            }
         }
+        preOrder.setUserId(userId);
+        preOrder.setSellPrice(goodsRepo.get(preOrder.getGoodsId(),userId).getSellPrice());
         return repo.insert(preOrder);
     }
 
     @Override
     public Integer updPreOrderIsCollect(Long id, Long isCollect) throws ServiceException {
-        // TODO Auto-generated method stub
-        return repo.updPreOrderIsCollect(id, isCollect);
+        Long userId = UserSessionUtils.getCurrentUserId();
+        return repo.updPreOrderIsCollect(id, userId, isCollect);
     }
 
     @Override

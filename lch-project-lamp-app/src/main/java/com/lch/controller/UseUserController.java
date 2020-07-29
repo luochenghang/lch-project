@@ -2,6 +2,7 @@ package com.lch.controller;
 
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
+import com.lch.common.config.UserSessionUtils;
 import com.lch.common.constant.App;
 import com.lch.common.exceptions.ServiceException;
 import com.lch.component.annotation.auth.AuthIgnore;
@@ -25,7 +26,7 @@ public class UseUserController extends BaseController {
 
 	@GetMapping("/getUser")
 	public AjaxResponse getUser() {
-		Long id = TokenServiceImpl.getCurrentUserId();
+		Long id = UserSessionUtils.getCurrentUserId();
 		return succees(userUserService.getUser(id));
 	}
 
