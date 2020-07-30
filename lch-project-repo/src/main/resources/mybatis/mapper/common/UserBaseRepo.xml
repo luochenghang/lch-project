@@ -54,14 +54,14 @@
 		SELECT
 			b.id,
 			b.nick_name AS nickName,
-			b.phone_no AS phoneNo,
-			b.portrait,
-			b.sex,
-			b.real_name as realName,
-			b.create_date as createDate,
-			u.user_type as userType,
-			b.address,
-		    (select count(1) from t_order o where u.id = o.userId and o.`status` = 1)   as orderCount,
+		IFNULL(b.phone_no,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) AS phoneNo,
+		b.portrait,
+		b.sex,
+		IFNULL(b.real_name,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as realName,
+		b.create_date as createDate,
+		u.user_type as userType,
+		IFNULL(b.address,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as address,
+		    (select count(1) from t_order o where u.id = o.userId and o.`status` = 1)   as orderCount
 		FROM
 			t_user b
 		LEFT JOIN t_user_info u ON u.user_base_id = b.id
@@ -93,13 +93,13 @@
 		SELECT
 			b.id,
 			b.nick_name AS nickName,
-			b.phone_no AS phoneNo,
+			IFNULL(b.phone_no,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) AS phoneNo,
 			b.portrait,
 			b.sex,
-			b.real_name AS realName,
-			b.create_date AS createDate,
-			u.user_type AS userType,
-			b.address
+			IFNULL(b.real_name,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as realName,
+			b.create_date as createDate,
+			u.user_type as userType,
+			IFNULL(b.address,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as address
 		FROM
 			t_user b
 		JOIN t_user_info u ON u.user_base_id = b.id
@@ -113,14 +113,13 @@
 	<select id="getUserByInfoId"  resultMap="UserInfo">
 		SELECT
 			b.id,
-			b.nick_name AS nickName,
-			b.phone_no AS phoneNo,
+			IFNULL(b.phone_no,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) AS phoneNo,
 			b.portrait,
 			b.sex,
-			b.real_name as realName,
+			IFNULL(b.real_name,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as realName,
 			b.create_date as createDate,
 			u.user_type as userType,
-			b.address,
+			IFNULL(b.address,(select GROUP_CONCAT(a.mobile SEPARATOR ",") from t_address a where a.userId = u.id)) as address,
 			(select count(1) from t_order o where u.id = o.userId and o.`status` = 1)   as orderCount,
 			(select IFNULL(sum(o.sellPrice),0) * 0.1 from t_order o where u.id = o.userId and o.`status` = 1)   as savePrice,
  			(select count(1) from t_pre_order p where p.userId = u.id and p.isCollect = 1) as favCount

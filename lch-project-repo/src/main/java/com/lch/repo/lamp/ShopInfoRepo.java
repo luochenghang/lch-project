@@ -17,14 +17,14 @@ public interface ShopInfoRepo extends BaseRepo<ShopInfo>{
 	 * 
 	 * @return
 	 */
-	@Insert("insert t_shop_info(shopName,address,phone,email,contactName) values(#{shopName},#{address},#{phone},#{email},#{contactName})")
+	@Insert("insert t_shop_info(shopName,address,phone,email,contactName, lng, lat) values(#{shopName},#{address},#{phone},#{email},#{contactName},#{lng},#{lat})")
 	Integer addShopInfo(ShopInfo shopInfo);
 	
 	/**
 	 * 修改店铺信息
 	 * @return
 	 */
-	@Update("update t_shop_info set shopName = #{shopName},address = #{address},phone = #{phone},email = #{email},contactName = #{contactName}")
+	@Update("update t_shop_info set shopName = #{shopName},address = #{address},phone = #{phone},email = #{email},contactName = #{contactName},lng=#{lng},lat=#{lat}")
 	Integer updShopInfo(ShopInfo shopInfo);
 	
 	/*

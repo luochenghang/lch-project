@@ -1,5 +1,7 @@
 package com.lch.controller;
 
+import com.lch.utils.GetLngAndLat;
+import com.lch.utils.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,13 +35,18 @@ public class ShopInfoController extends BaseController {
 	}
 	/**
 	 * 编辑
-	 * 
-	 * @param goods
+	 *
 	 * @return
 	 * @throws ServiceException
 	 */
 	@PostMapping("/updShopInfo")
 	public AjaxResponse updShopInfo(ShopInfo shopInfo) throws ServiceException {
+		Location location = GetLngAndLat.getURLContent(shopInfo.getAddress());
+		if (location != null){
+			shopInfo.setLat(location.getLat()).setLng(location.getLng());
+		}else{
+			return fail("请输入详细的地址！");
+		}
 		return succees(shopInfoService.updShopInfo(shopInfo));
 	};
 
@@ -52,7 +59,12 @@ public class ShopInfoController extends BaseController {
 	 */
 	@PostMapping("/addShopInfo")
 	public AjaxResponse addShopInfo(ShopInfo shopInfo) throws ServiceException {
-
+		Location location = GetLngAndLat.getURLContent(shopInfo.getAddress());
+		if (location != null){
+			shopInfo.setLat(location.getLat()).setLng(location.getLng());
+		}else{
+			return fail("请输入详细的地址！");
+		}
 		return succees(shopInfoService.addShopInfo(shopInfo));
 	};
 	

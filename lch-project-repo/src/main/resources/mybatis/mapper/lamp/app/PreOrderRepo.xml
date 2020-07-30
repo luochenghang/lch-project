@@ -2,34 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lch.repo.lamp.app.PreOrderRepo">
 
-	<select id="getAllPreOrder" resultType="PreOrder">
-		SELECT
-			t.*,
-			tu.real_name as userName,
-			tu.phone_no as phone,
-			g.title,
-			g.coverImg,
-			ty.`name` as 'goodsTypeName'
-		FROM
-		t_pre_order t
-		left JOIN t_goods g on t.goodsId = g.id
-		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
-		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
-		left join t_user_info ti on ti.id = t.userId
-		left join t_user tu on ti.user_base_id = tu.id
-		 		
-		WHERE t.isCollect = 1
-		<if test="status != null">
-			AND t.status = #{status}
-		</if>
-		<!-- 日期 -->
-		<if test="createDate != null">
-			AND TO_DAYS(t.createDate)  = TO_DAYS(#{createDate})
-		</if>
-		ORDER BY t.status, t.createDate desc
-	</select>
+    <select id="getAllPreOrder" resultType="PreOrder">
+        SELECT
+        t.*,
+        IFNUll(tu.real_name,tu.nick_name) as userName,
+        tu.phone_no as phone,
+        g.title,
+        g.coverImg,
+        ty.`name` as 'goodsTypeName'
+        FROM
+        t_pre_order t
+        left JOIN t_goods g on t.goodsId = g.id
+        left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+        <!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+        left join t_user_info ti on ti.id = t.userId
+        left join t_user tu on ti.user_base_id = tu.id
 
-	<insert id="insert">
+        WHERE t.isCollect = 1
+        <if test="status != null">
+            AND t.status = #{status}
+        </if>
+        <!-- 日期 -->
+        <if test="createDate != null">
+            AND TO_DAYS(t.createDate) = TO_DAYS(#{createDate})
+        </if>
+        ORDER BY t.status, t.createDate desc
+    </select>
+
+    <insert id="insert">
 		insert into t_pre_order(
 			userId,
 			goodsId,
@@ -51,28 +51,25 @@
 	</insert>
 
 
-	
-	
-	
-	<select id="get" resultType="PreOrder">
-		SELECT
-			t.*,
-			tu.real_name as userName,
-			tu.phone_no as phone,
-			g.title,
-			g.coverImg,
-			ty.`name` as 'goodsTypeName'
-		FROM
-		t_pre_order t
-		left JOIN t_goods g on t.goodsId = g.id
-		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
-		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
-		left join t_user_info ti on  ti.id = t.userId
-		left join t_user tu on ti.user_base_id = tu.id		
-		WHERE t.id=#{id}
-	</select>
-	
-	<select id="getPreOrderCountGroupByStatus" resultType="PreOrder">
+    <select id="get" resultType="PreOrder">
+        SELECT
+        t.*,
+        IFNUll(tu.real_name,tu.nick_name) as userName,
+        tu.phone_no as phone,
+        g.title,
+        g.coverImg,
+        ty.`name` as 'goodsTypeName'
+        FROM
+        t_pre_order t
+        left JOIN t_goods g on t.goodsId = g.id
+        left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+        <!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+        left join t_user_info ti on ti.id = t.userId
+        left join t_user tu on ti.user_base_id = tu.id
+        WHERE t.id=#{id}
+    </select>
+
+    <select id="getPreOrderCountGroupByStatus" resultType="PreOrder">
 	select 
 		(select COUNT(1) from t_pre_order where status = 0 and isCollect = 1 ) as unReadPreOrderCount,
 		(select COUNT(1) from t_pre_order where status = 1 and isCollect = 1 ) as donePreOrderCount,
@@ -80,24 +77,24 @@
 	
 	</select>
     <select id="getPreOrderByUserId" resultType="com.lch.entity.lamp.PreOrder">
-		SELECT
-		t.*,
-		tu.real_name as userName,
-		tu.phone_no as phone,
-		g.title,
-		g.coverImg,
-		ty.`name` as 'goodsTypeName'
-		FROM
-		t_pre_order t
-		left JOIN t_goods g on t.goodsId = g.id
-		left JOIN t_goods_type ty on g.goodsTypeId = ty.id
-		<!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
-		left join t_user_info ti on  ti.id = t.userId
-		left join t_user tu on ti.user_base_id = tu.id
-		WHERE t.userId=#{userId}
-		and t.isCollect = 1
+        SELECT
+        t.*,
+        IFNUll(tu.real_name,tu.nick_name) as userName,
+        tu.phone_no as phone,
+        g.title,
+        g.coverImg,
+        ty.`name` as 'goodsTypeName'
+        FROM
+        t_pre_order t
+        left JOIN t_goods g on t.goodsId = g.id
+        left JOIN t_goods_type ty on g.goodsTypeId = ty.id
+        <!-- 线下交易 手动添加用户 微信用户 微信进行登录授权获取用户信息 -->
+        left join t_user_info ti on ti.id = t.userId
+        left join t_user tu on ti.user_base_id = tu.id
+        WHERE t.userId=#{userId}
+        and t.isCollect = 1
 
-	</select>
+    </select>
 
 
 </mapper>

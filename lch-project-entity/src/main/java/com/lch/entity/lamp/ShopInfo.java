@@ -26,6 +26,11 @@ public class ShopInfo extends DataEntity<ShopInfo> {
 
 	private String contactName;// 联系人
 
+	private double lng; //经度
+
+	private double lat; //纬度
+
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createDate; // 创建时间
 

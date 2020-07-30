@@ -3,6 +3,7 @@ package com.lch.controller;
 import com.lch.common.base.BaseController;
 import com.lch.common.config.AjaxResponse;
 import com.lch.common.exceptions.ServiceException;
+import com.lch.component.annotation.auth.AuthIgnore;
 import com.lch.entity.lamp.ShopInfo;
 import com.lch.service.lamp.ShopInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +28,19 @@ public class ShopInfoController extends BaseController {
 	 * @return
 	 */
 	@GetMapping("/getShopInfo")
+	@AuthIgnore(login = false)
 	public AjaxResponse getShopInfo() {
 		return succees(shopInfoService.getShopInfo());
 	}
 
 
-	
-	////主页界面需要的api
-	@GetMapping("/getSysHomeOrderProductNum")
-	public AjaxResponse getSysHomeOrderProductNum() throws ServiceException {
-		return succees(shopInfoService.getSysHomeOrderProductNum());
-	};
-	
+//
+//	////主页界面需要的api
+//	@GetMapping("/getSysHomeOrderProductNum")
+//	public AjaxResponse getSysHomeOrderProductNum() throws ServiceException {
+//		return succees(shopInfoService.getSysHomeOrderProductNum());
+//	};
+//
 	
 
 }

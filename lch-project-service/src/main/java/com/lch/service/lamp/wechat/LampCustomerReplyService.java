@@ -5,5 +5,5 @@ import javax.servlet.http.HttpServletResponse;
 
  public interface LampCustomerReplyService {
 
-      public String replyMessage(HttpServletRequest request, HttpServletResponse response) throws Exception;
+       String replyMessage(HttpServletRequest request, HttpServletResponse response) throws Exception;
  }

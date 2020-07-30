@@ -43,6 +43,13 @@ public class UseUserController extends BaseController {
 		return succees(map);
 	}
 
+	@RequestMapping(value = "/decipherPhone", method = RequestMethod.POST)
+	public AjaxResponse decipherPhone(UlBo bo,String phone) throws ServiceException {
+		bo.setUserType(App.JBS_TYPE);
+		String s = userService.decipherPhone(phone, bo.getIv(), bo.getCode(), App.JBSLAMP_APPID, App.JBSLAMP_APP_SECRET);
+		return succees(s);
+	}
+
 	
 
 	

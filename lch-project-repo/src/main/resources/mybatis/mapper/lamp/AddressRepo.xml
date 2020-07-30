@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lch.repo.lamp.AddressRepo">
+
+    <select id="getAddressList" resultType="Address">
+		SELECT
+			t.id,
+			t.userId,
+			t. linkMan,
+			t.address,
+			t.mobile,
+			t.createDate
+			FROM
+				t_address t
+			WHERE
+				t.userId = #{userId}
+
+		ORDER BY t.createDate desc
+	</select>
+
+    <insert id="insert">
+		insert into t_address(
+		userId,
+			linkMan,
+			address,
+			mobile,
+			createDate
+		)
+		SELECT
+		#{userId},
+		#{linkMan},
+		#{address},
+		#{mobile},
+		now()
+		FROM
+		dual
+		WHERE NOT EXISTS(SELECT id FROM t_address WHERE `address` = #{address} and userId = #{userId})
+	</insert>
+
+    <delete id="delAddress">
+		delete from t_address where id = #{id} and userId = #{userId}
+	</delete>
+
+
+    <update id="update">
+        update t_address set
+		updateDate = now()
+        <if test="linkMan != null or linkMan!=''">
+            , linkMan =#{linkMan}
+        </if>
+        <if test="address != null or address!=''">
+            , `address` = #{address}
+        </if>
+        <if test="mobile != null or mobile!=''">
+            , `mobile` = #{mobile}
+        </if>
+        where id=#{id}
+        and userId = #{userId}
+    </update>
+
+    <select id="get" resultType="Address">
+		SELECT
+			t.id,
+			t.userId,
+			t. linkMan,
+			t.address,
+			t.mobile,
+			t.createDate
+			FROM
+				t_address t
+		WHERE t.id=#{id}
+	</select>
+
+
+</mapper>
